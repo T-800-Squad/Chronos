@@ -1,4 +1,7 @@
 package moduloGestionUsuarios.UserManagement.service;
 
-public class AuthenticationService {
+import org.springframework.stereotype.Service;
+
+@Service
+public class AuthenticationService implements AuthenticationServiceInterface {
 }
