@@ -36,7 +36,7 @@ public class Student {
 
     private LocalDate birthdate;
 
-    private String adress;
+    private String address;
 
     @Column(name="student_password")
     private String studentPassword;
@@ -105,12 +105,12 @@ public class Student {
         return birthdate;
     }
 
-    public void setAdress(String adress) {
-        this.adress = adress;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
-    public String getAdress() {
-        return adress;
+    public String getAddress() {
+        return address;
     }
 
     public void setStudentPassword(String studentPassword) {

@@ -34,24 +34,25 @@ public class AuthenticationService implements AuthenticationServiceInterface {
         Optional<Student> student = studentRepository.findByEmailAddress(studentEmail);
         Optional<Administrator> administrator = administratorRepository.findByEmailAddress(adminEmail);
         if (student.isPresent()) {
-            return studentAuntenticate(password, userName, student);
+            Student stud = student.get();
+            return studentAuntenticate(password, userName, stud);
         }
         if(administrator.isPresent()) {
-            return administratorAuntenticate(password, userName, administrator);
+            Administrator admin = administrator.get();
+            return administratorAuntenticate(password, userName, admin);
         }
         throw new UserManagementException(UserManagementException.User_Not_Found);
     }
 
-    private String studentAuntenticate(String password,String userName,Optional<Student> student) throws UserManagementException {
-        Student stud = student.get();
-        if(passwordEncoder.matches(password,stud.getStudentPassword())) {
+    private String studentAuntenticate(String password,String userName,Student student) throws UserManagementException {
+        if(passwordEncoder.matches(password,student.getStudentPassword())) {
             return jwtService.generateToken(userName, "student");
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }
 
-    private String administratorAuntenticate(String password,String userName,Optional<Administrator> administrator) throws UserManagementException {
-        Administrator admin = administrator.get();
+    private String administratorAuntenticate(String password,String userName,Administrator admin) throws UserManagementException {
+
         if(passwordEncoder.matches(password,admin.getAdminPassword())) {
             return jwtService.generateToken(userName, admin.getRole());
         }

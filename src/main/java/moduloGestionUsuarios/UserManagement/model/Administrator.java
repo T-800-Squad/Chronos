@@ -19,7 +19,7 @@ public class Administrator {
     @Column(name ="full_name")
     private String fullName;
 
-    private String speciality;
+    private String specialty;
 
     @Column(name="email_address")
     private String emailAddress;
@@ -51,11 +51,11 @@ public class Administrator {
     public String getFullName() {
         return fullName;
     }
-    public void setSpeciality(String speciality) {
-        this.speciality = speciality;
+    public void setSpecialty(String specialty) {
+        this.specialty = specialty;
     }
-    public String getSpeciality() {
-        return speciality;
+    public String getSpecialty() {
+        return specialty;
     }
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
