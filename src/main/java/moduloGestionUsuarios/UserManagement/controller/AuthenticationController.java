@@ -16,9 +16,4 @@ public class AuthenticationController {
     public String login(@RequestBody UserLogDTO userLogDTO) throws UserManagementException {
         return authenticationService.authenticate(userLogDTO);
     }
-
-    @PostMapping("/logout")
-    public void  logout(){
-        
-    }
 }
