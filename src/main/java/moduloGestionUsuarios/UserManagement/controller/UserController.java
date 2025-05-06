@@ -16,14 +16,14 @@ public class UserController {
     @Autowired
     private UserServiceInterface userService;
 
-    @PostMapping()
+    @PostMapping("/student")
     public void studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO){
         userService.addStudent(studentRegisterDTO);
     }
 
     @PostMapping("/admin")
     public void adminRegister(@RequestBody AdminRegisterDTO adminRegisterDTO){
-
+        userService.addAdministrator(adminRegisterDTO);
     }
 
     @PutMapping()

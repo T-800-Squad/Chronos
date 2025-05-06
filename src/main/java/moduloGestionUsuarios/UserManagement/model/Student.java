@@ -1,11 +1,10 @@
 package moduloGestionUsuarios.UserManagement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -40,6 +39,14 @@ public class Student {
 
     @Column(name="student_password")
     private String studentPassword;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "student_contact",
+            joinColumns = @JoinColumn(name = "code_student"),
+            inverseJoinColumns = @JoinColumn(name = "id_contact")
+    )
+    private List<EmergencyContact> emergencyContacts = new ArrayList<>();
 
     public void setIdStudent(String idStudent) {
         this.idStudent = idStudent;
@@ -121,5 +128,8 @@ public class Student {
         return studentPassword;
     }
 
+    public List<EmergencyContact> getEmergencyContacts() {
+        return emergencyContacts;
+    }
 }
 

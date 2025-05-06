@@ -1,5 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
+import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
@@ -47,24 +48,25 @@ public class UserService implements UserServiceInterface {
         emergencyContact.setTypeId(studentRegisterDTO.getTypeIdContact());
         emergencyContact.setPhoneNumber(studentRegisterDTO.getPhoneNumber());
         emergencyContact.setRelationship(studentRegisterDTO.getRelationship());
-        emergencyContactRepository.save(emergencyContact);
+
+        student.getEmergencyContacts().add(emergencyContact);
 
         studentRepository.save(student);
     }
 
-    public Administrator addAdministrator(Administrator administrator){
-        Administrator newAdministrator = new Administrator();
+    public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO){
+        Administrator administrator = new Administrator();
 
-        newAdministrator.setContactNumber(administrator.getContactNumber());
-        newAdministrator.setEmailAddress(administrator.getEmailAddress());
-        newAdministrator.setFullName(administrator.getFullName());
-        newAdministrator.setTypeId(administrator.getTypeId());
-        newAdministrator.setRole(administrator.getRole());
-        newAdministrator.setSpecialty(administrator.getSpecialty());
-        newAdministrator.setIdAdmin(administrator.getIdAdmin());
-        newAdministrator.setAdminPassword(passwordEncoder.encode(administrator.getAdminPassword()));
+        administrator.setContactNumber(administrator.getContactNumber());
+        administrator.setEmailAddress(administrator.getEmailAddress());
+        administrator.setFullName(administrator.getFullName());
+        administrator.setTypeId(administrator.getTypeId());
+        administrator.setRole(administrator.getRole());
+        administrator.setSpecialty(administrator.getSpecialty());
+        administrator.setIdAdmin(administrator.getIdAdmin());
+        administrator.setAdminPassword(passwordEncoder.encode(administrator.getAdminPassword()));
 
-        return administratorRepository.save(newAdministrator);
+        return administratorRepository.save(administrator);
     }
 
     public Optional<Administrator> findByEmailAddressAdmin(String email){
