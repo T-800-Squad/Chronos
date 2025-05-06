@@ -59,5 +59,6 @@ public class EmergencyContact {
     public void setRelationship(String relationship) {
         this.relationship = relationship;
     }
+    public List<Student> getStudents() {return students;}
 }
 

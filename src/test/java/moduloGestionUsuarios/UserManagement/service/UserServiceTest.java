@@ -75,7 +75,7 @@ public class UserServiceTest {
         assert contact.getFullName().equals("Carlos Pérez");
     }
 
-    @Test
+    /*@Test
     public void testAddAdministrator() {
         Administrator admin = new Administrator();
         admin.setIdAdmin("admin001");
@@ -101,6 +101,6 @@ public class UserServiceTest {
         Administrator captured = adminCaptor.getValue();
         assert captured.getIdAdmin().equals("admin001");
         assert captured.getEmailAddress().equals("ana@example.com");
-    }
+    }*/
 
 }

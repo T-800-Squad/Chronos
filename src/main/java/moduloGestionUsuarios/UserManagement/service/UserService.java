@@ -11,7 +11,6 @@ import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -49,22 +48,25 @@ public class UserService implements UserServiceInterface {
         emergencyContact.setPhoneNumber(studentRegisterDTO.getPhoneNumber());
         emergencyContact.setRelationship(studentRegisterDTO.getRelationship());
 
-        student.getEmergencyContacts().add(emergencyContact);
-
         studentRepository.save(student);
+        addEmergencyContact(student, emergencyContact);
+    }
+
+    public void addEmergencyContact(Student student, EmergencyContact emergencyContact){
+        student.getEmergencyContacts().add(emergencyContact);
     }
 
     public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO){
         Administrator administrator = new Administrator();
 
-        administrator.setContactNumber(administrator.getContactNumber());
-        administrator.setEmailAddress(administrator.getEmailAddress());
-        administrator.setFullName(administrator.getFullName());
-        administrator.setTypeId(administrator.getTypeId());
-        administrator.setRole(administrator.getRole());
-        administrator.setSpecialty(administrator.getSpecialty());
-        administrator.setIdAdmin(administrator.getIdAdmin());
-        administrator.setAdminPassword(passwordEncoder.encode(administrator.getAdminPassword()));
+        administrator.setContactNumber(adminRegisterDTO.getContactNumber());
+        administrator.setEmailAddress(adminRegisterDTO.getEmailAddress());
+        administrator.setFullName(adminRegisterDTO.getFullName());
+        administrator.setTypeId(adminRegisterDTO.getTypeId());
+        administrator.setRole(adminRegisterDTO.getRole());
+        administrator.setSpecialty(adminRegisterDTO.getSpecialty());
+        administrator.setIdAdmin(adminRegisterDTO.getIdAdmin());
+        administrator.setAdminPassword(passwordEncoder.encode(adminRegisterDTO.getAdminPassword()));
 
         return administratorRepository.save(administrator);
     }

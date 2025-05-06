@@ -28,7 +28,6 @@ public class UserController {
 
     @PutMapping()
     public void update(@RequestBody UserUpdateDTO userUpdateDTO){
-
     }
 
     @DeleteMapping()
