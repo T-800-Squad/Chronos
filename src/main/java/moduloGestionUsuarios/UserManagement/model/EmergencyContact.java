@@ -55,6 +55,5 @@ public class EmergencyContact {
     public void setRelationship(String relationship) {
         this.relationship = relationship;
     }
-
 }
 

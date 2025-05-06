@@ -4,6 +4,7 @@ import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.ChangePasswordDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.model.Student;
 import moduloGestionUsuarios.UserManagement.service.UserService;
 import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class UserController {
 
     @PostMapping()
     public void studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO){
-
+        userService.addStudent(studentRegisterDTO);
     }
 
     @PostMapping("/admin")
