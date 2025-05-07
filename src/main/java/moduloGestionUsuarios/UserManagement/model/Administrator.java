@@ -30,7 +30,7 @@ public class Administrator {
     @Column(name="admin_password")
     private String adminPassword;
 
-    private String role;
+    private Role role;
 
     public void setIdAdmin(String idAdmin) {
         this.idAdmin = idAdmin;
@@ -75,10 +75,10 @@ public class Administrator {
     public String getAdminPassword() {
         return adminPassword;
     }
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 }
