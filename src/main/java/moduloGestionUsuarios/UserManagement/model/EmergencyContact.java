@@ -59,6 +59,13 @@ public class EmergencyContact {
     public void setRelationship(String relationship) {
         this.relationship = relationship;
     }
+
     public List<Student> getStudents() {return students;}
+
+
+    public void setId(String number) {
+        this.idContact = number;
+    }
+
 }
 

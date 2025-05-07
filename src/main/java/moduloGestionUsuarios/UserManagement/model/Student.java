@@ -131,5 +131,11 @@ public class Student {
     public List<EmergencyContact> getEmergencyContacts() {
         return emergencyContacts;
     }
+
+
+    public void setId(String number) {
+        this.idStudent = number;
+    }
+  
 }
 

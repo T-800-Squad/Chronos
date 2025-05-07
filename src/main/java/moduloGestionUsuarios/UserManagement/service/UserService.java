@@ -1,5 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
+
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.UserManagementException;
@@ -10,6 +11,13 @@ import moduloGestionUsuarios.UserManagement.model.Student;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
+
+import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
+import moduloGestionUsuarios.UserManagement.model.Student;
+import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
+import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
+
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,6 +38,7 @@ public class UserService implements UserServiceInterface {
     private EmergencyContactRepositoryJPA emergencyContactRepository;
 
     @Autowired
+
     private ScheduleRepository scheduleRepository;
 
     @Autowired
@@ -90,4 +99,38 @@ public class UserService implements UserServiceInterface {
     public Optional<Student> findByEmailAddressStudent(String email){
         return studentRepository.findByEmailAddress(email);
     }
+
+    private PasswordEncoder passwordEncoder;
+
+    public void updateStudent(UserUpdateDTO userUpdateDTO) {
+        Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+
+        student.setAddress(userUpdateDTO.getAddress());
+        student.setAcademicProgram(userUpdateDTO.getAcademicProgram());
+        student.setContactNumber(userUpdateDTO.getContactNumber());
+        student.setTypeId(userUpdateDTO.getTypeIdStudent());
+
+        EmergencyContact emergencyContact = emergencyContactRepository.findById(userUpdateDTO.getIdContact())
+                .orElseThrow(() -> new RuntimeException("Contacto de emergencia no encontrado"));
+
+        emergencyContact.setFullName(userUpdateDTO.getFullNameContact());
+        emergencyContact.setTypeId(userUpdateDTO.getTypeIdContact());
+        emergencyContact.setPhoneNumber(userUpdateDTO.getPhoneNumber());
+        emergencyContact.setRelationship(userUpdateDTO.getRelationship());
+
+        studentRepository.save(student);
+        emergencyContactRepository.save(emergencyContact);
+    }
+
+
+    public void addEmergencyContact(Student student, EmergencyContact emergencyContact){
+        student.getEmergencyContacts().add(emergencyContact);
+    }
+
+    public void deleteStudent(String idStudent) {
+        studentRepository.deleteById(idStudent);
+    }
+
+
 }
