@@ -1,4 +1,4 @@
-package moduloGestionUsuarios.UserManagement;
+package moduloGestionUsuarios.UserManagement.exception;
 
 public class UserManagementException extends Exception {
 

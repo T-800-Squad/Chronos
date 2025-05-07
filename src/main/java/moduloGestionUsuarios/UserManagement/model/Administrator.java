@@ -1,9 +1,9 @@
 package moduloGestionUsuarios.UserManagement.model;
 
-import jakarta.persistence.*;
-
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name="administrator")
@@ -30,16 +30,7 @@ public class Administrator {
     @Column(name="admin_password")
     private String adminPassword;
 
-    @Column(name = "role")
-    private String role;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "schedule_admin",
-            joinColumns = @JoinColumn(name = "id_admin"),
-            inverseJoinColumns = @JoinColumn(name = "id_schedule")
-    )
-    private List<Schedule> schedules = new ArrayList<>();
+    private Role role;
 
     public void setIdAdmin(String idAdmin) {
         this.idAdmin = idAdmin;
@@ -84,12 +75,10 @@ public class Administrator {
     public String getAdminPassword() {
         return adminPassword;
     }
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
-    public List<Schedule> getSchedules() {return schedules;}
-    public void setSchedules(List<Schedule> schedules) {this.schedules = schedules;}
 }

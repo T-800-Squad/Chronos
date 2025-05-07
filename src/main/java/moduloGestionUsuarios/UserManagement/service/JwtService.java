@@ -2,6 +2,7 @@ package moduloGestionUsuarios.UserManagement.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import moduloGestionUsuarios.UserManagement.model.Role;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -11,20 +12,27 @@ public class JwtService {
     private final String SECRET_KEY = "ContraseñaSuperSecreta123";
     private long expirationTime;
 
-    public String generateToken(String userName,String role) {
+    public String generateToken(String id,String userName, String email, String name, Role role) {
         expirationTime = expirationTime(role);
         return JWT.create()
+                .withClaim("id", id)
                 .withClaim("userName",userName)
-                .withClaim("role", role)
+                .withClaim("email",email)
+                .withClaim("name", name)
+                .withClaim("role", role.getDescription())
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                 .sign(Algorithm.HMAC256(SECRET_KEY));
     }
 
-    private long expirationTime(String role) {
-        if (role.equals("student")) {
-            return 1000*60*60;
+    private long expirationTime(Role role) {
+        if (role.equals(Role.MEDICAL_SECRETARY)) {
+            return 1000*60*60*8;
         }
-        return 1000*60*60*12;
+        return 1000*60*60;
+    }
+
+    public String getId(String token) {
+        return JWT.decode(token).getClaim("id").asString();
     }
 
     public String getUserName(String token) {
@@ -35,5 +43,12 @@ public class JwtService {
         return JWT.decode(token).getClaim("role").asString();
     }
 
+    public String getEmail(String token) {
+        return JWT.decode(token).getClaim("email").asString();
+    }
+
+    public String getName(String token) {
+        return JWT.decode(token).getClaim("name").asString();
+    }
 
 }
