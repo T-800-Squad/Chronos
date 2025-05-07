@@ -1,15 +1,15 @@
 package moduloGestionUsuarios.UserManagement.model;
 
-<<<<<<< HEAD
+
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-=======
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
->>>>>>> development
+
 
 @Entity
 
@@ -29,17 +29,11 @@ public class EmergencyContact {
     @Column(name="type_id")
     private String typeId;
 
-<<<<<<< HEAD
+
     @Column(name="relationship")
     private String relationship;
 
-    @ManyToMany(mappedBy = "emergencyContacts")
-    private List<Student> students = new ArrayList<>();
-
-=======
-    private String relationship;
-
->>>>>>> development
+   
     public String getIdContact() {
         return idContact;
     }
@@ -70,13 +64,4 @@ public class EmergencyContact {
     public void setRelationship(String relationship) {
         this.relationship = relationship;
     }
-<<<<<<< HEAD
 }
-=======
-
-    public void setId(String number) {
-        this.idContact = number;
-    }
-}
-
->>>>>>> development
