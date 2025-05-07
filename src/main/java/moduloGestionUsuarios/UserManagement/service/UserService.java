@@ -50,4 +50,8 @@ public class UserService implements UserServiceInterface {
         student.getEmergencyContacts().add(emergencyContact);
     }
 
+    public void deleteStudent(String idStudent) {
+        studentRepository.deleteById(idStudent);
+    }
+
 }

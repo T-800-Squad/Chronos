@@ -1,6 +1,7 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.controller.UserController;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
 import moduloGestionUsuarios.UserManagement.model.Student;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
@@ -8,6 +9,7 @@ import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -22,6 +24,9 @@ public class UserControllerTest  {
 
     @Mock
     private StudentRepositoryJPA studentRepository;
+
+    @InjectMocks
+    private UserController userController;
 
     @Mock
     private EmergencyContactRepositoryJPA emergencyContactRepository;
@@ -110,4 +115,5 @@ public class UserControllerTest  {
 
         assertEquals("Contacto de emergencia no encontrado", thrown.getMessage());
     }
+
 }

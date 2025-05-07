@@ -7,6 +7,7 @@ import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 import moduloGestionUsuarios.UserManagement.service.UserService;
 import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,9 +31,10 @@ public class UserController {
         userService.updateStudent(userUpdateDTO);
     }
 
-    @DeleteMapping()
-    public void delete(@RequestParam String code){
-
+    @DeleteMapping("/{idStudent}")
+    public ResponseEntity<String> deleteStudent(@PathVariable String idStudent) {
+        userService.deleteStudent(idStudent);
+        return ResponseEntity.ok("Estudiante eliminado");
     }
 
     @PutMapping("/password")
