@@ -1,8 +1,9 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.DTO.UserLogDTO;
-import moduloGestionUsuarios.UserManagement.UserManagementException;
+import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
+import moduloGestionUsuarios.UserManagement.model.Role;
 import moduloGestionUsuarios.UserManagement.model.Student;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
@@ -96,7 +97,7 @@ public class AuthenticationServiceTest {
         Administrator administrator = new Administrator();
         administrator.setEmailAddress("email@escuelaing.edu.co");
         administrator.setAdminPassword(encoder.encode("1234"));
-        administrator.setRole("administrator");
+        administrator.setRole(Role.ADMIN);
         Mockito.when(studentRepository.findByEmailAddress("email@mail.escuelaing.edu.co")).thenReturn(Optional.empty());
         Mockito.when(administratorRepository.findByEmailAddress("email@escuelaing.edu.co")).thenReturn(Optional.of(administrator));
         UserLogDTO userLogDTO = new UserLogDTO("email","1234");

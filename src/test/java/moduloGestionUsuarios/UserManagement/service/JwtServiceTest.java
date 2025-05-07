@@ -1,5 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
+import moduloGestionUsuarios.UserManagement.model.Role;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,15 +14,21 @@ public class JwtServiceTest {
 
     @Test
     public void testJwtTokenGenerateToStudent() {
-        String token = jwtService.generateToken("test","student");
+        String token = jwtService.generateToken("test","test","test","test", Role.STUDENT);
         assertEquals("test",jwtService.getUserName(token));
-        assertEquals("student",jwtService.getRole(token));
+        assertEquals("Student",jwtService.getRole(token));
+        assertEquals("test",jwtService.getEmail(token));
+        assertEquals("test",jwtService.getId(token));
+        assertEquals("test",jwtService.getName(token));
     }
     @Test
     public void testJwtTokenGenerateToAnotherRole() {
-        String token = jwtService.generateToken("test","administrator");
-        assertEquals("administrator",jwtService.getRole(token));
+        String token = jwtService.generateToken("test","test","test","test",Role.ADMIN);
+        assertEquals("Administrator",jwtService.getRole(token));
         assertEquals("test",jwtService.getUserName(token));
+        assertEquals("test",jwtService.getEmail(token));
+        assertEquals("test",jwtService.getId(token));
+        assertEquals("test",jwtService.getName(token));
     }
 
 }
