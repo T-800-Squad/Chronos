@@ -12,10 +12,10 @@ import java.util.List;
 public class Student {
 
     @Column(name = "id_student")
-    @Id
     private String idStudent;
 
     @Column(name = "code_student")
+    @Id
     private String codeStudent;
 
     @Column(name="type_id")

@@ -14,7 +14,7 @@ public class AdminRegisterDTO {
     private String adminPassword;
 
     // Data Schedule
-    private List<String> schedule;
+    private List<Integer> schedule;
 
     //Getters and Setters Administrator
     public String getIdAdmin() {return idAdmin;}
@@ -35,6 +35,6 @@ public class AdminRegisterDTO {
     public void setAdminPassword(String adminPassword) {this.adminPassword = adminPassword;}
 
     //Getters and Setters Schedule
-    public List<String> getSchedule() {return schedule;}
-    public void setSchedule(List<String> schedule) {this.schedule = schedule;}
+    public List<Integer> getSchedule() {return schedule;}
+    public void setSchedule(List<Integer> schedule) {this.schedule = schedule;}
 }

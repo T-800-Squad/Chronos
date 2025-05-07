@@ -1,80 +1,104 @@
 package moduloGestionUsuarios.UserManagement.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
+import moduloGestionUsuarios.UserManagement.model.Administrator;
+import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
+import moduloGestionUsuarios.UserManagement.model.Schedule;
+import moduloGestionUsuarios.UserManagement.model.Student;
+import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
+import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
+import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
+import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
+import moduloGestionUsuarios.UserManagement.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
+import org.mockito.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.time.LocalDate;
+import java.util.*;
 
-@WebMvcTest(UserController.class)
-public class UserControllerTest {
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-    @Autowired
-    private MockMvc mockMvc;
+class UserServiceTest {
 
-    @SuppressWarnings("removal")
-    @MockBean
-    private UserServiceInterface userService;
+    @InjectMocks
+    private UserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    @Mock
+    private StudentRepositoryJPA studentRepository;
 
-    /*@Test
-    public void testStudentRegister() throws Exception {
-        StudentRegisterDTO dto = new StudentRegisterDTO();
-        dto.setIdStudent("1234");
-        dto.setCodeStudent("S001");
-        dto.setStudentPassword("password");
-        dto.setAddress("Calle Falsa 123");
-        dto.setBirthDate(null);
-        dto.setAcademicProgram("Ingeniería");
-        dto.setContactNumber("3001112233");
-        dto.setEmailAddress("student@test.com");
-        dto.setTypeIdStudent("CC");
-        dto.setFullNameStudent("Juan Pérez");
+    @Mock
+    private AdministratorRepositoryJPA administratorRepository;
 
-        dto.setIdContact("C123");
-        dto.setFullNameContact("María Pérez");
-        dto.setTypeIdContact("CC");
-        dto.setPhoneNumber("3109999999");
-        dto.setRelationship("Madre");
+    @Mock
+    private EmergencyContactRepositoryJPA emergencyContactRepository;
 
-        mockMvc.perform(post("/user/student")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk());
+    @Mock
+    private ScheduleRepository scheduleRepository;
 
-        verify(userService, times(1)).addStudent(dto);
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testAdminRegister() throws Exception {
+    void addAdministrator_shouldSaveAdministratorWithSchedules() {
         AdminRegisterDTO dto = new AdminRegisterDTO();
-        dto.setIdAdmin("A001");
-        dto.setFullName("Carlos López");
-        dto.setEmailAddress("admin@test.com");
-        dto.setContactNumber("3118888877");
+        dto.setIdAdmin("123");
+        dto.setFullName("Admin Uno");
+        dto.setAdminPassword("adminpass");
+        dto.setEmailAddress("admin@correo.com");
+        dto.setContactNumber("3000000000");
+        dto.setRole("ADMIN");
+        dto.setSpecialty("TI");
         dto.setTypeId("CC");
-        dto.setRole("Administrador");
-        dto.setSpecialty("Sistemas");
-        dto.setAdminPassword("adminPass");
+        dto.setSchedule(Arrays.asList(1)); // ID de prueba
 
-        mockMvc.perform(post("/user/admin")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk());
+        Schedule schedule = new Schedule(); // objeto ficticio
+        when(scheduleRepository.findById("1")).thenReturn(Optional.of(schedule));
+        when(passwordEncoder.encode("adminpass")).thenReturn("hashedpass");
+        when(administratorRepository.save(any(Administrator.class))).thenAnswer(i -> i.getArgument(0));
 
-        verify(userService, times(1)).addAdministrator(dto);
-    }*/
+        Administrator saved = userService.addAdministrator(dto);
+
+        assertEquals("hashedpass", saved.getAdminPassword());
+        assertEquals(1, saved.getSchedules().size());
+    }
+
+    @Test
+    void addStudent_shouldSaveStudentWithEmergencyContact() {
+        StudentRegisterDTO dto = new StudentRegisterDTO();
+        dto.setIdStudent("456");
+        dto.setCodeStudent("2020112233");
+        dto.setStudentPassword("password");
+        dto.setFullNameStudent("Estudiante Uno");
+        dto.setEmailAddress("est@correo.com");
+        dto.setAcademicProgram("Ingeniería");
+        dto.setAddress("Cra 1 # 2-3");
+        dto.setContactNumber("3100000000");
+        dto.setTypeIdStudent("TI");
+        dto.setBirthDate(LocalDate.parse("2000-01-01"));
+        dto.setIdContact("789");
+        dto.setFullNameContact("Contacto Uno");
+        dto.setTypeIdContact("CC");
+        dto.setPhoneNumber("3200000000");
+        dto.setRelationship("Madre");
+
+        when(passwordEncoder.encode("password")).thenReturn("hashedStudentPassword");
+
+        Student savedStudent = new Student();
+        when(studentRepository.saveAndFlush(any(Student.class))).thenReturn(savedStudent);
+        when(studentRepository.save(any(Student.class))).thenReturn(savedStudent);
+
+        userService.addStudent(dto);
+
+        verify(emergencyContactRepository).save(any(EmergencyContact.class));
+        verify(studentRepository, times(1)).save(any(Student.class));
+    }
 }

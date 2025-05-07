@@ -4,13 +4,17 @@ import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
+import moduloGestionUsuarios.UserManagement.model.Schedule;
 import moduloGestionUsuarios.UserManagement.model.Student;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
+import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,6 +27,9 @@ public class UserService implements UserServiceInterface {
 
     @Autowired
     private EmergencyContactRepositoryJPA emergencyContactRepository;
+
+    @Autowired
+    private ScheduleRepository scheduleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,12 +55,10 @@ public class UserService implements UserServiceInterface {
         emergencyContact.setPhoneNumber(studentRegisterDTO.getPhoneNumber());
         emergencyContact.setRelationship(studentRegisterDTO.getRelationship());
 
-        studentRepository.save(student);
-        addEmergencyContact(student, emergencyContact);
-    }
-
-    public void addEmergencyContact(Student student, EmergencyContact emergencyContact){
+        studentRepository.saveAndFlush(student);
+        emergencyContactRepository.save(emergencyContact);
         student.getEmergencyContacts().add(emergencyContact);
+        studentRepository.save(student);
     }
 
     public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO){
@@ -67,6 +72,12 @@ public class UserService implements UserServiceInterface {
         administrator.setSpecialty(adminRegisterDTO.getSpecialty());
         administrator.setIdAdmin(adminRegisterDTO.getIdAdmin());
         administrator.setAdminPassword(passwordEncoder.encode(adminRegisterDTO.getAdminPassword()));
+
+        List<Schedule> scheduleList = new ArrayList<>();
+        for (Integer scheduleId : adminRegisterDTO.getSchedule()) {
+            scheduleRepository.findById(String.valueOf(scheduleId)).ifPresent(scheduleList::add);
+        }
+        administrator.setSchedules(scheduleList);
 
         return administratorRepository.save(administrator);
     }
