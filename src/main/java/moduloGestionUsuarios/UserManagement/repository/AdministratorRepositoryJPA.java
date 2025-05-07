@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface AdministratorRepositoryJPA extends JpaRepository<Administrator, String> {
     Optional<Administrator> findByEmailAddress(String email);
+    Optional<Administrator> findByRole(String role);
 }
