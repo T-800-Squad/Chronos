@@ -1,5 +1,8 @@
 package moduloGestionUsuarios.UserManagement.model;
+<<<<<<< HEAD
 
+=======
+>>>>>>> development
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -40,7 +43,11 @@ public class Student {
     @Column(name="student_password")
     private String studentPassword;
 
+<<<<<<< HEAD
     @ManyToMany
+=======
+    @ManyToMany(cascade = CascadeType.ALL)
+>>>>>>> development
     @JoinTable(
             name = "student_contact",
             joinColumns = @JoinColumn(name = "code_student"),
@@ -131,4 +138,13 @@ public class Student {
     public List<EmergencyContact> getEmergencyContacts() {
         return emergencyContacts;
     }
+<<<<<<< HEAD
 }
+=======
+
+    public void setId(String number) {
+        this.idStudent = number;
+    }
+}
+
+>>>>>>> development

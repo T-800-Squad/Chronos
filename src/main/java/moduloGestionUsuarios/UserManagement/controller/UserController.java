@@ -28,7 +28,7 @@ public class UserController {
 
     @PutMapping()
     public void update(@RequestBody UserUpdateDTO userUpdateDTO){
-
+        userService.updateStudent(userUpdateDTO);
     }
 
     @DeleteMapping("/{idStudent}")
