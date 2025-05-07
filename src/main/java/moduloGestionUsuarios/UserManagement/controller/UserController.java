@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private UserServiceInterface userService;
+    private UserService userService;
 
     @PostMapping()
     public void studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO){
@@ -27,7 +27,7 @@ public class UserController {
 
     @PutMapping()
     public void update(@RequestBody UserUpdateDTO userUpdateDTO){
-
+        userService.updateStudent(userUpdateDTO);
     }
 
     @DeleteMapping()
