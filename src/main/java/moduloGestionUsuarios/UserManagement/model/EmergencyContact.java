@@ -56,5 +56,8 @@ public class EmergencyContact {
         this.relationship = relationship;
     }
 
+    public void setId(String number) {
+        this.idContact = number;
+    }
 }
 
