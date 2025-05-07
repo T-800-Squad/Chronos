@@ -2,6 +2,7 @@ package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
+import moduloGestionUsuarios.UserManagement.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
 import moduloGestionUsuarios.UserManagement.model.Schedule;
