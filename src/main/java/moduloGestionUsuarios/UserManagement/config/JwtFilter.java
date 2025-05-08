@@ -10,6 +10,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 public class JwtFilter extends OncePerRequestFilter {
 
@@ -19,7 +21,17 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         String path = request.getRequestURI();
-        if (path.equals("/authentication/login")) {
+
+        List<String> openPaths = Arrays.asList(
+                "/authentication/login",
+                "/swagger-ui/index.html",
+                "/swagger-ui/",
+                "/v3/api-docs",
+                "/swagger-resources/**",
+                "/webjars/**"
+        );
+
+        if (openPaths.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
             return;
         }
