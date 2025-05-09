@@ -1,8 +1,9 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.DTO.UserLogDTO;
-import moduloGestionUsuarios.UserManagement.UserManagementException;
+import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
+import moduloGestionUsuarios.UserManagement.model.Role;
 import moduloGestionUsuarios.UserManagement.model.Student;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
@@ -46,7 +47,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 
     private String studentAuntenticate(String password,String userName,Student student) throws UserManagementException {
         if(passwordEncoder.matches(password,student.getStudentPassword())) {
-            return jwtService.generateToken(userName, "student");
+            return jwtService.generateToken(student.getIdStudent(),userName,student.getEmailAddress(),student.getFullName(), Role.STUDENT);
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }
@@ -54,7 +55,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
     private String administratorAuntenticate(String password,String userName,Administrator admin) throws UserManagementException {
 
         if(passwordEncoder.matches(password,admin.getAdminPassword())) {
-            return jwtService.generateToken(userName, admin.getRole());
+            return jwtService.generateToken(admin.getIdAdmin(),userName,admin.getEmailAddress(),admin.getFullName(), admin.getRole());
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }

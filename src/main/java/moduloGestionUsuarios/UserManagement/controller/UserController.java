@@ -1,52 +1,34 @@
 package moduloGestionUsuarios.UserManagement.controller;
 
-import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.ChangePasswordDTO;
-import moduloGestionUsuarios.UserManagement.DTO.IdentificationDTO;
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
+
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
-import moduloGestionUsuarios.UserManagement.UserManagementException;
-import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
+
+import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
+import moduloGestionUsuarios.UserManagement.service.UserService;
+
+import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private UserServiceInterface userService;
-
-    @PostMapping("/student")
-    public void studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO){
-        userService.addStudent(studentRegisterDTO);
-    }
-
-    @PostMapping("/admin")
-    public void adminRegister(@RequestBody AdminRegisterDTO adminRegisterDTO){
-        userService.addAdministrator(adminRegisterDTO);
-    }
-
+    private UserService userService;
     @PutMapping()
     public void update(@RequestBody UserUpdateDTO userUpdateDTO){
+        userService.updateStudent(userUpdateDTO);
     }
 
-    @DeleteMapping()
-    public void delete(@RequestParam String code){
-
-    }
-
-    @PutMapping("/password")
-    public void changePassword(@RequestBody ChangePasswordDTO changePasswordDTO){
-
-    }
-
-    @GetMapping()
-    public String verifyPassword(@RequestParam String password){
-        return null;
+    @DeleteMapping("/{idStudent}")
+    public ResponseEntity<String> deleteStudent(@PathVariable String idStudent) {
+        userService.deleteStudent(idStudent);
+        return ResponseEntity.ok("Estudiante eliminado");
     }
 
     @PostMapping("/query")

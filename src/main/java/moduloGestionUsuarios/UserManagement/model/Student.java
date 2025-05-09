@@ -1,5 +1,4 @@
 package moduloGestionUsuarios.UserManagement.model;
-
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -12,10 +11,10 @@ import java.util.List;
 public class Student {
 
     @Column(name = "id_student")
+    @Id
     private String idStudent;
 
     @Column(name = "code_student")
-    @Id
     private String codeStudent;
 
     @Column(name="type_id")
@@ -130,6 +129,10 @@ public class Student {
 
     public List<EmergencyContact> getEmergencyContacts() {
         return emergencyContacts;
+    }
+
+    public void setId(String number) {
+        this.idStudent = number;
     }
 }
 

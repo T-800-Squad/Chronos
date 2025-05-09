@@ -1,27 +1,36 @@
 package moduloGestionUsuarios.UserManagement.service;
 
-import moduloGestionUsuarios.UserManagement.UserManagementException;
+
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
-import moduloGestionUsuarios.UserManagement.model.Schedule;
+
 import moduloGestionUsuarios.UserManagement.model.Student;
+
+
+
+import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
+import moduloGestionUsuarios.UserManagement.model.*;
+
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
+import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
-import org.apache.catalina.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
+
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
+import org.springframework.dao.DataIntegrityViolationException;
+
 
 @Service
 public class UserService implements UserServiceInterface {
@@ -35,65 +44,103 @@ public class UserService implements UserServiceInterface {
     private EmergencyContactRepositoryJPA emergencyContactRepository;
 
     @Autowired
+
     private ScheduleRepository scheduleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void addStudent(StudentRegisterDTO studentRegisterDTO){
-        Student student = new Student();
+    public void addStudent(StudentRegisterDTO studentRegisterDTO) throws UserManagementException {
+        try {
+            Student student = new Student();
 
-        student.setIdStudent(studentRegisterDTO.getIdStudent());
-        student.setCodeStudent(studentRegisterDTO.getCodeStudent());
-        student.setStudentPassword(passwordEncoder.encode(studentRegisterDTO.getStudentPassword()));
-        student.setAddress(studentRegisterDTO.getAddress());
-        student.setBirthdate(studentRegisterDTO.getBirthDate());
-        student.setAcademicProgram(studentRegisterDTO.getAcademicProgram());
-        student.setContactNumber(studentRegisterDTO.getContactNumber());
-        student.setEmailAddress(studentRegisterDTO.getEmailAddress());
-        student.setTypeId(studentRegisterDTO.getTypeIdStudent());
-        student.setFullName(studentRegisterDTO.getFullNameStudent());
+            student.setIdStudent(studentRegisterDTO.getIdStudent());
+            student.setCodeStudent(studentRegisterDTO.getCodeStudent());
+            student.setStudentPassword(passwordEncoder.encode(studentRegisterDTO.getStudentPassword()));
+            student.setAddress(studentRegisterDTO.getAddress());
+            student.setBirthdate(studentRegisterDTO.getBirthDate());
+            student.setAcademicProgram(studentRegisterDTO.getAcademicProgram());
+            student.setContactNumber(studentRegisterDTO.getContactNumber());
+            student.setEmailAddress(studentRegisterDTO.getEmailAddress());
+            student.setTypeId(studentRegisterDTO.getTypeIdStudent());
+            student.setFullName(studentRegisterDTO.getFullNameStudent());
 
-        EmergencyContact emergencyContact = new EmergencyContact();
-        emergencyContact.setIdContact(studentRegisterDTO.getIdContact());
-        emergencyContact.setFullName(studentRegisterDTO.getFullNameContact());
-        emergencyContact.setTypeId(studentRegisterDTO.getTypeIdContact());
-        emergencyContact.setPhoneNumber(studentRegisterDTO.getPhoneNumber());
-        emergencyContact.setRelationship(studentRegisterDTO.getRelationship());
+            EmergencyContact emergencyContact = new EmergencyContact();
+            emergencyContact.setIdContact(studentRegisterDTO.getIdContact());
+            emergencyContact.setFullName(studentRegisterDTO.getFullNameContact());
+            emergencyContact.setTypeId(studentRegisterDTO.getTypeIdContact());
+            emergencyContact.setPhoneNumber(studentRegisterDTO.getPhoneNumber());
+            emergencyContact.setRelationship(studentRegisterDTO.getRelationship());
 
-        studentRepository.saveAndFlush(student);
-        emergencyContactRepository.save(emergencyContact);
-        student.getEmergencyContacts().add(emergencyContact);
-        studentRepository.save(student);
-    }
-
-    public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO){
-        Administrator administrator = new Administrator();
-
-        administrator.setContactNumber(adminRegisterDTO.getContactNumber());
-        administrator.setEmailAddress(adminRegisterDTO.getEmailAddress());
-        administrator.setFullName(adminRegisterDTO.getFullName());
-        administrator.setTypeId(adminRegisterDTO.getTypeId());
-        administrator.setRole(adminRegisterDTO.getRole());
-        administrator.setSpecialty(adminRegisterDTO.getSpecialty());
-        administrator.setIdAdmin(adminRegisterDTO.getIdAdmin());
-        administrator.setAdminPassword(passwordEncoder.encode(adminRegisterDTO.getAdminPassword()));
-
-        List<Schedule> scheduleList = new ArrayList<>();
-        for (Integer scheduleId : adminRegisterDTO.getSchedule()) {
-            scheduleRepository.findById(String.valueOf(scheduleId)).ifPresent(scheduleList::add);
+            studentRepository.saveAndFlush(student);
+            emergencyContactRepository.save(emergencyContact);
+            student.getEmergencyContacts().add(emergencyContact);
+            studentRepository.save(student);
+        } catch (DataIntegrityViolationException e){
+            throw new UserManagementException("Violación de integridad de datos: " + e.getMostSpecificCause().getMessage());
+        } catch (Exception e) {
+            throw new UserManagementException("Error inesperado: " + e.getMessage());
         }
-        administrator.setSchedules(scheduleList);
-
-        return administratorRepository.save(administrator);
     }
 
-    public Optional<Administrator> findByEmailAddressAdmin(String email){
-        return administratorRepository.findByEmailAddress(email);
+    public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO) throws UserManagementException {
+        try {
+            Administrator administrator = new Administrator();
+
+            administrator.setContactNumber(adminRegisterDTO.getContactNumber());
+            administrator.setEmailAddress(adminRegisterDTO.getEmailAddress());
+            administrator.setFullName(adminRegisterDTO.getFullName());
+            administrator.setTypeId(adminRegisterDTO.getTypeId());
+            administrator.setIdAdmin(adminRegisterDTO.getIdAdmin());
+            administrator.setAdminPassword(passwordEncoder.encode(adminRegisterDTO.getAdminPassword()));
+
+            administrator.setRole(Role.valueOf(adminRegisterDTO.getRole().toUpperCase()));
+
+            Role role = Role.valueOf(adminRegisterDTO.getRole().toUpperCase());
+            administrator.setRole(role);
+
+            if (role == Role.DOCTOR) {
+                String specialtyStr = adminRegisterDTO.getSpecialty();
+                if (specialtyStr == null || specialtyStr.trim().isEmpty()) {
+                    throw new UserManagementException("La especialidad es obligatoria para el rol DOCTOR.");
+                }
+                administrator.setSpecialty(Specialty.valueOf(specialtyStr.toUpperCase()));
+            } else {
+                administrator.setSpecialty(null);
+            }
+
+            return administratorRepository.save(administrator);
+        } catch (DataIntegrityViolationException e){
+            throw new UserManagementException("Violación de integridad de datos: " + e.getMostSpecificCause().getMessage());
+        } catch (Exception e) {
+            throw new UserManagementException("Error inesperado: " + e.getMessage());
+        }
     }
 
-    public Optional<Student> findByEmailAddressStudent(String email){
-        return studentRepository.findByEmailAddress(email);
+
+    public void updateStudent(UserUpdateDTO userUpdateDTO) {
+        Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
+                .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
+
+        student.setAddress(userUpdateDTO.getAddress());
+        student.setAcademicProgram(userUpdateDTO.getAcademicProgram());
+        student.setContactNumber(userUpdateDTO.getContactNumber());
+        student.setTypeId(userUpdateDTO.getTypeIdStudent());
+
+        EmergencyContact emergencyContact = emergencyContactRepository.findById(userUpdateDTO.getIdContact())
+                .orElseThrow(() -> new RuntimeException("Contacto de emergencia no encontrado"));
+
+        emergencyContact.setFullName(userUpdateDTO.getFullNameContact());
+        emergencyContact.setTypeId(userUpdateDTO.getTypeIdContact());
+        emergencyContact.setPhoneNumber(userUpdateDTO.getPhoneNumber());
+        emergencyContact.setRelationship(userUpdateDTO.getRelationship());
+
+        studentRepository.save(student);
+        emergencyContactRepository.save(emergencyContact);
+    }
+
+    public void deleteStudent(String idStudent) {
+        studentRepository.deleteById(idStudent);
     }
     
     public List<UserDTO> queryUser(UserDTO userDTO) throws UserManagementException{
@@ -182,7 +229,7 @@ public class UserService implements UserServiceInterface {
     }
     
     private UserDTO convertToDTO(Administrator admin) {
-        return new UserDTO(admin.getFullName(), admin.getSpecialty(), admin.getIdAdmin(), admin.getRole(), null);
+        return new UserDTO(admin.getFullName(), admin.getSpecialty().getDescription(), admin.getIdAdmin(), admin.getRole().getDescription(), null);
     }
     
     

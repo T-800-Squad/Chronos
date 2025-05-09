@@ -19,7 +19,8 @@ public class Administrator {
     @Column(name ="full_name")
     private String fullName;
 
-    private String specialty;
+    @Column(name="specialty")
+    private Specialty specialty;
 
     @Column(name="email_address")
     private String emailAddress;
@@ -31,7 +32,7 @@ public class Administrator {
     private String adminPassword;
 
     @Column(name = "role")
-    private String role;
+    private Role role;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
@@ -39,7 +40,7 @@ public class Administrator {
             joinColumns = @JoinColumn(name = "id_admin"),
             inverseJoinColumns = @JoinColumn(name = "id_schedule")
     )
-    private List<Schedule> schedules = new ArrayList<>();
+    private List<Schedule> schedules;
 
     public void setIdAdmin(String idAdmin) {
         this.idAdmin = idAdmin;
@@ -60,10 +61,10 @@ public class Administrator {
     public String getFullName() {
         return fullName;
     }
-    public void setSpecialty(String specialty) {
+    public void setSpecialty(Specialty specialty) {
         this.specialty = specialty;
     }
-    public String getSpecialty() {
+    public Specialty getSpecialty() {
         return specialty;
     }
     public void setEmailAddress(String emailAddress) {
@@ -84,10 +85,10 @@ public class Administrator {
     public String getAdminPassword() {
         return adminPassword;
     }
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
     public List<Schedule> getSchedules() {return schedules;}
