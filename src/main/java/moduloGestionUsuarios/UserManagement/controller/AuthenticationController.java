@@ -46,16 +46,7 @@ public class AuthenticationController {
 
     }
 
-    @PutMapping()
-    public void update(@RequestBody UserUpdateDTO userUpdateDTO){
-        userService.updateStudent(userUpdateDTO);
-    }
 
-    @DeleteMapping("/{idStudent}")
-    public ResponseEntity<String> deleteStudent(@PathVariable String idStudent) {
-        userService.deleteStudent(idStudent);
-        return ResponseEntity.ok("Estudiante eliminado");
-    }
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<String>> login(@RequestBody UserLogDTO userLogDTO) throws UserManagementException {
         String token = authenticationService.authenticate(userLogDTO);

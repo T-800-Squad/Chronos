@@ -15,8 +15,6 @@ public interface UserServiceInterface {
     void addStudent(StudentRegisterDTO student) throws UserManagementException;
     Administrator addAdministrator(AdminRegisterDTO administrator) throws UserManagementException;
     void updateStudent(UserUpdateDTO userUpdateDTO);
-
-    List<UserDTO> queryUser(UserDTO userDTO) throws UserManagementException;
     void deleteStudent(String idStudent);
 
 }
