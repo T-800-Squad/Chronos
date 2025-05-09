@@ -1,7 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.IdentificationDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
@@ -13,8 +12,11 @@ import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositor
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -92,41 +94,37 @@ public class UserService implements UserServiceInterface {
         return studentRepository.findByEmailAddress(email);
     }
 
-    public UserDTO consultByName(String name) {
-    return studentRepository.findByFullName(name)
-            .map(this::convertToDTO)
-            .orElse(null);
+    public UserDTO queryUser(UserDTO userDTO) {
+        if (userDTO.getFullName() != null) {
+            return studentRepository.findByFullName(userDTO.getFullName())
+                    .map(this::convertToDTO)
+                    .orElse(null);
+        }
+        if (userDTO.getAcademicProgram() != null) {
+            return studentRepository.findByAcademicProgram(userDTO.getAcademicProgram())
+                    .map(this::convertToDTO)
+                    .orElse(null);
+        }
+        if (userDTO.getCodeStudent() != null) {
+            return studentRepository.findByCodeStudent(userDTO.getCodeStudent())
+                    .map(this::convertToDTO)
+                    .orElse(null);
+        }
+        if (userDTO.getRole() != null) {
+            return administratorRepository.findByRole(userDTO.getRole())
+                    .map(this::convertToDTO)
+                    .orElse(null);
+        }
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No valid search parameters provided");
     }
 
-    public UserDTO consultByAcademicProgram(String program) {
-        return studentRepository.findByAcademicProgram(program)
-                .map(this::convertToDTO)
-                .orElse(null);
-    }
-
-    public UserDTO consultByCode(String code) {
-        return studentRepository.findByCodeStudent(code)
-                .map(this::convertToDTO)
-                .orElse(null);
-    }
-
-    public UserDTO consultByRole(String role) {
-        return administratorRepository.findByRole(role)
-                .map(this::convertToDTO)
-                .orElse(null);
-    }
-
-    public UserDTO consultByIdentification(IdentificationDTO identificationDTO) {
-        return studentRepository.findByIdStudent(identificationDTO.getIdStudent())
-                .map(this::convertToDTO)
-                .orElse(null);
+    private UserDTO convertToDTO(Student student) {
+        return new UserDTO(student.getFullName(), student.getAcademicProgram(), student.getCodeStudent(), "Student", student.getIdStudent());
     }
     
-    private UserDTO convertToDTO(Student student) {
-        return new UserDTO(student.getFullName(), student.getAcademicProgram(), student.getCodeStudent(), "Student");
-    }
-
     private UserDTO convertToDTO(Administrator admin) {
-        return new UserDTO(admin.getFullName(), admin.getSpecialty(), admin.getIdAdmin(), admin.getRole());
+        return new UserDTO(admin.getFullName(), admin.getSpecialty(), admin.getIdAdmin(), admin.getRole(), null);
     }
+    
+    
 }

@@ -2,13 +2,15 @@ package moduloGestionUsuarios.UserManagement.controller;
 
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.ChangePasswordDTO;
+import moduloGestionUsuarios.UserManagement.DTO.IdentificationDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
+import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
-import moduloGestionUsuarios.UserManagement.model.Student;
-import moduloGestionUsuarios.UserManagement.service.UserService;
 import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/user")
@@ -44,4 +46,10 @@ public class UserController {
     public String verifyPassword(@RequestParam String password){
         return null;
     }
+
+    @PostMapping("/query")
+    public UserDTO queryUser(@RequestBody UserDTO userDTO) {
+        return userService.queryUser(userDTO);
+    }
+
 }
