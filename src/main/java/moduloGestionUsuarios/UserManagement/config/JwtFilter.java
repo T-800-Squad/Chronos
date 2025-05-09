@@ -21,7 +21,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");
         String path = request.getRequestURI();
-        // Excluir las rutas de Swagger de la validación
+        // Excluir las rutas de Swagger de la validación.
         List<String> openPaths = Arrays.asList(
                 "/authentication/login",
                 "/swagger-ui/index.html",
@@ -31,19 +31,19 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/webjars/**"
         );
 
-        // Si la ruta es una de las abiertas, continuar sin filtrar
+        // Si la ruta es una de las abiertas, continuar sin filtrar.
         if (openPaths.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);
             return;
         }
 
-        // Si no hay token o no empieza con "Bearer ", rechazar la petición
+        // Si no hay token o no empieza con "Bearer ", rechazar la petición.
         if (header == null || !header.startsWith("Bearer ")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session error, no token");
             return;
         }
 
-        String token = header.substring(7); // Eliminar "Bearer "
+        String token = header.substring(7); // Eliminar "Bearer ".
         try {
             JWT.require(Algorithm.HMAC256(SECRET_KEY)).build().verify(token);
         } catch (JWTVerificationException e) {

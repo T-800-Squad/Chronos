@@ -8,6 +8,7 @@ import moduloGestionUsuarios.UserManagement.DTO.UserLogDTO;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.service.AuthenticationServiceInterface;
 import moduloGestionUsuarios.UserManagement.service.UserService;
+import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,46 +21,29 @@ public class AuthenticationController {
     private AuthenticationServiceInterface authenticationService;
 
     @Autowired
-    private UserService userService;
+    private UserServiceInterface userService;
 
     @PostMapping("/student")
-    public ResponseEntity<ApiResponse<String>> studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO){
-        try {
-            userService.addStudent(studentRegisterDTO);
-            ApiResponse<String> response = new ApiResponse<>(
-                    HttpStatus.OK.value(),
-                    "Estudiante registrado correctamente",
-                    "Id: " + studentRegisterDTO.getIdStudent()
-            );
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        } catch (UserManagementException e) {
-            ApiResponse<String> response = new ApiResponse<>(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "Error al registrar el estudiante",
-                    e.getMessage()
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+    public ResponseEntity<ApiResponse<String>> studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO) throws UserManagementException{
+        userService.addStudent(studentRegisterDTO);
+        ApiResponse<String> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Estudiante registrado correctamente",
+                "Id: " + studentRegisterDTO.getIdStudent()
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/admin")
-    public ResponseEntity<ApiResponse<String>> adminRegister(@RequestBody AdminRegisterDTO adminRegisterDTO){
-        try {
-            userService.addAdministrator(adminRegisterDTO);
-            ApiResponse<String> response = new ApiResponse<>(
-                    HttpStatus.OK.value(),
-                    "Administrador registrado correctamente",
-                    "Id: " + adminRegisterDTO.getIdAdmin()
-            );
-            return ResponseEntity.status(HttpStatus.OK).body(response);
-        }catch (UserManagementException e) {
-            ApiResponse<String> response = new ApiResponse<>(
-                    HttpStatus.BAD_REQUEST.value(),
-                    "Error al registrar al administrador",
-                    e.getMessage()
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-        }
+    public ResponseEntity<ApiResponse<String>> adminRegister(@RequestBody AdminRegisterDTO adminRegisterDTO) throws UserManagementException{
+        userService.addAdministrator(adminRegisterDTO);
+        ApiResponse<String> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Administrador registrado correctamente",
+                "Id: " + adminRegisterDTO.getIdAdmin()
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+
     }
 
     @PutMapping()
