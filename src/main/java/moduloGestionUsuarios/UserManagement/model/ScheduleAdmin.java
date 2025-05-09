@@ -14,7 +14,7 @@ public class ScheduleAdmin {
     private String id_admin;
 
     @Id
-    private String id_schedule;
+    private Integer id_schedule;
 
     public String getId_admin() {
         return id_admin;
@@ -22,10 +22,10 @@ public class ScheduleAdmin {
     public void setId_admin(String id_admin) {
         this.id_admin = id_admin;
     }
-    public String getId_schedule() {
+    public Integer getId_schedule() {
         return id_schedule;
     }
-    public void setId_schedule(String id_schedule) {
+    public void setId_schedule(Integer id_schedule) {
         this.id_schedule = id_schedule;
     }
 }

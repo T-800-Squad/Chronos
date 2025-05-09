@@ -1,9 +1,9 @@
 package moduloGestionUsuarios.UserManagement.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="administrator")
@@ -19,7 +19,8 @@ public class Administrator {
     @Column(name ="full_name")
     private String fullName;
 
-    private String specialty;
+    @Column(name="specialty")
+    private Specialty specialty;
 
     @Column(name="email_address")
     private String emailAddress;
@@ -30,7 +31,16 @@ public class Administrator {
     @Column(name="admin_password")
     private String adminPassword;
 
+    @Column(name = "role")
     private Role role;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "schedule_admin",
+            joinColumns = @JoinColumn(name = "id_admin"),
+            inverseJoinColumns = @JoinColumn(name = "id_schedule")
+    )
+    private List<Schedule> schedules;
 
     public void setIdAdmin(String idAdmin) {
         this.idAdmin = idAdmin;
@@ -51,10 +61,10 @@ public class Administrator {
     public String getFullName() {
         return fullName;
     }
-    public void setSpecialty(String specialty) {
+    public void setSpecialty(Specialty specialty) {
         this.specialty = specialty;
     }
-    public String getSpecialty() {
+    public Specialty getSpecialty() {
         return specialty;
     }
     public void setEmailAddress(String emailAddress) {
@@ -81,4 +91,6 @@ public class Administrator {
     public Role getRole() {
         return role;
     }
+    public List<Schedule> getSchedules() {return schedules;}
+    public void setSchedules(List<Schedule> schedules) {this.schedules = schedules;}
 }
