@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class ExceptionController {
 
+    /**
+     * Handles UserManagementException and returns a BAD_REQUEST response.
+     *
+     * @param ex The UserManagementException instance
+     * @return ResponseEntity with the error details
+     */
     @ExceptionHandler(UserManagementException.class)
     public ResponseEntity<ApiResponseException> handleUserManagementException(UserManagementException ex) {
         ApiResponseException response = new ApiResponseException(
@@ -18,6 +24,13 @@ public class ExceptionController {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
+    /**
+     * Handles DataIntegrityViolationException and returns a BAD_REQUEST response with a detailed message.
+     *
+     * @param ex The DataIntegrityViolationException instance
+     * @return ResponseEntity with the error details
+     */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<ApiResponseException> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         ApiResponseException response = new ApiResponseException(

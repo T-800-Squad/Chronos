@@ -1,5 +1,9 @@
 package moduloGestionUsuarios.UserManagement.response;
 
+/**
+ * Represents a simplified API error response structure.
+ * Typically used to encapsulate error status codes and messages when handling exceptions.
+ */
 public class ApiResponseException{
     private int status;
     private String message;

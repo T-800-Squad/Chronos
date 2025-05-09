@@ -2,6 +2,11 @@ package moduloGestionUsuarios.UserManagement.DTO;
 
 import java.time.LocalDate;
 
+/**
+ * Data Transfer Object (DTO) class used to encapsulate the student registration data,
+ * including both student-specific information and emergency contact information.
+ * This DTO is used for registering a student and their associated emergency contact.
+ */
 public class StudentRegisterDTO {
     //Data Student
     private String codeStudent;

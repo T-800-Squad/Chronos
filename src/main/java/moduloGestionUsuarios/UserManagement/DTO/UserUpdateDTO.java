@@ -2,9 +2,13 @@ package moduloGestionUsuarios.UserManagement.DTO;
 
 import java.time.LocalDate;
 
+/**
+ * Data Transfer Object (DTO) used to encapsulate the data required for updating a student's
+ * personal and emergency contact information.
+ */
 public class UserUpdateDTO {
 
-
+    //Data Student
     private String academicProgram;
     private String contactNumber;
     private String address;
@@ -42,5 +46,4 @@ public class UserUpdateDTO {
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
     public String getRelationship() { return relationship; }
     public void setRelationship(String relationship) { this.relationship = relationship; }
-
 }

@@ -5,14 +5,21 @@ import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
+/**
+ * Represents the many-to-many relationship between administrators and schedules.
+ * This entity serves as the join table that links administrators to their respective schedules.
+ * The primary key is a composite of `id_admin` (the identifier of the administrator) and `id_schedule` (the identifier of the schedule).
+ */
 @Entity
 @Table(name="schedule_admin")
 @IdClass(ScheduleAdminId.class)
 public class ScheduleAdmin {
 
+    /** The identifier of the administrator. This is part of the composite primary key. */
     @Id
     private String id_admin;
 
+    /** The identifier of the schedule. This is part of the composite primary key. */
     @Id
     private Integer id_schedule;
 
