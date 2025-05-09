@@ -101,9 +101,6 @@ public class UserService implements UserServiceInterface {
         }
     }
 
-    public Optional<Student> findByEmailAddressStudent(String email){
-        return studentRepository.findByEmailAddress(email);
-    }
 
     public void updateStudent(UserUpdateDTO userUpdateDTO) {
         Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
