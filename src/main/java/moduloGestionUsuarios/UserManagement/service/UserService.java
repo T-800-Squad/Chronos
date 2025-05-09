@@ -12,6 +12,7 @@ import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJP
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
+import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -94,79 +95,88 @@ public class UserService implements UserServiceInterface {
     public Optional<Student> findByEmailAddressStudent(String email){
         return studentRepository.findByEmailAddress(email);
     }
-
-    public List<UserDTO> queryUser(UserDTO userDTO) {
+    
+    public List<UserDTO> queryUser(UserDTO userDTO) throws UserManagementException{
         List<UserDTO> userlist = new ArrayList<>();
         
         if (userDTO.getFullName() != null) {
             List<Student> users = studentRepository.findByFullName(userDTO.getFullName());
             List<Administrator> admins = administratorRepository.findFullname(userDTO.getFullName());
-            if (users.isEmpty() && admins.isEmpty()) {
-                throw new UserManagementException(UserManagementException.User_Not_Exist);
-            }
-            for (Administrator administrator : admins) {
-                userlist.add(convertToDTO(administrator));
-            }
-            for (Student user : users) {
-                userlist.add(convertToDTO(user));
-            }
+            userlist.addAll(userNameNotNull(users,admins,userlist));
         }
         if (userDTO.getAcademicProgram() != null) {
-            List<Student> users = studentRepository.findByAcademicProgram(userDTO.getAcademicProgram());
-            List<UserDTO> programs = new ArrayList<>();
-            if (users.isEmpty()) {
-                throw new UserManagementException(UserManagementException.User_Not_Exist);
-            }
-            if (!userlist.isEmpty()) {
-                for (UserDTO u : userlist) {
-                    for (Student s : users) {
-                        if (u.equals(s)) {
-                            programs.add(u);
-                        } 
-                    }
-                }
-            } else {
-                userlist = programs;
-            }
-
-            if (programs.isEmpty()) {
-                throw new UserManagementException(UserManagementException.User_Not_Exist);
-            }
+            List<Student> students = studentRepository.findByAcademicProgram(userDTO.getAcademicProgram());
+            userlist = academicProgramAndCodeStudentNotNull(students,userlist);
         }
         if (userDTO.getCodeStudent() != null) {
             List<Student> students = studentRepository.findByCodeStudent(userDTO.getCodeStudent());
-            if (students.isEmpty()) {
-                throw new UserManagementException(UserManagementException.User_Not_Exist);
-            }
-            for (Student student : students) {
-                userlist.add(convertToDTO(student));
-            }
+            userlist = academicProgramAndCodeStudentNotNull(students,userlist);
         }
         if (userDTO.getRole() != null) {
             List<Administrator> admins = administratorRepository.findByRole(userDTO.getRole());
-            if (admins.isEmpty()) {
-                throw new UserManagementException(UserManagementException.User_Not_Exist);
-            }
-            for (Administrator admin : admins) {
-                userlist.add(convertToDTO(admin));
-            }
+            userlist = roleNotNull(admins,userlist);
         }
         if (userDTO.getId() != null) {
             List<Student> students = studentRepository.findByIdStudent(userDTO.getId());
             List<Administrator> admins = administratorRepository.findByIdAdmin(userDTO.getId());
-            if (students.isEmpty() && admins.isEmpty()) {
-                throw new UserManagementException(UserManagementException.User_Not_Exist);
-            }
-            for (Student student : students) {
-                userlist.add(convertToDTO(student));
-            }
-            for (Administrator admin : admins) {
-                userlist.add(convertToDTO(admin));
-            }
+            userlist = academicProgramAndCodeStudentNotNull(students,userlist);
+            userlist = roleNotNull(admins,userlist);
         }
         return userlist;
     }
 
+    private List<UserDTO> userNameNotNull(List<Student> users, List<Administrator> admins,List<UserDTO> userlist) throws UserManagementException{
+        if (users.isEmpty() && admins.isEmpty()) {
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+        for (Administrator administrator : admins) {
+            userlist.add(convertToDTO(administrator));
+        }
+        for (Student user : users) {
+            userlist.add(convertToDTO(user));
+        }
+        return userlist;
+    }
+
+    private List<UserDTO> academicProgramAndCodeStudentNotNull(List<Student> students, List<UserDTO> userlist)throws UserManagementException{
+        List<UserDTO> programs = new ArrayList<>();
+        if (students.isEmpty()) {
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+        if (!userlist.isEmpty()) {
+            for (UserDTO u : userlist) {
+                for (Student s : students) {
+                    if (u.equals(s)) {
+                        programs.add(u);
+                    }
+                }
+            }
+        }
+        if (programs.isEmpty()) {
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+        return programs;
+    }
+
+    private List<UserDTO> roleNotNull(List<Administrator> admins, List<UserDTO> userlist)throws UserManagementException{
+        List<UserDTO> programs = new ArrayList<>();
+        if (admins.isEmpty()) {
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+        if (!userlist.isEmpty()) {
+            for (UserDTO u : userlist) {
+                for (Administrator s : admins) {
+                    if (u.equals(s)) {
+                        programs.add(u);
+                    }
+                }
+            }
+        }
+        if (programs.isEmpty()) {
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+        return programs;
+    }
     private UserDTO convertToDTO(Student student) {
         return new UserDTO(student.getFullName(), student.getAcademicProgram(), student.getCodeStudent(), "Student", student.getIdStudent());
     }

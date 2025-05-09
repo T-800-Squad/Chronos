@@ -6,6 +6,7 @@ import moduloGestionUsuarios.UserManagement.DTO.IdentificationDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.UserManagementException;
 import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -49,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/query")
-    public List<UserDTO> queryUser(@RequestBody UserDTO userDTO) {
+    public List<UserDTO> queryUser(@RequestBody UserDTO userDTO) throws UserManagementException {
         return userService.queryUser(userDTO);
     }
 
