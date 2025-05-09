@@ -22,26 +22,44 @@ public class AuthenticationController {
     @Autowired
     private UserService userService;
 
-    @PostMapping()
+    @PostMapping("/student")
     public ResponseEntity<ApiResponse<String>> studentRegister(@RequestBody StudentRegisterDTO studentRegisterDTO){
-        userService.addStudent(studentRegisterDTO);
-        ApiResponse<String> response = new ApiResponse<>(
-                HttpStatus.OK.value(),
-                "Estudiante registrado correctamente",
-                "Id: " + studentRegisterDTO.getIdStudent()
-        );
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        try {
+            userService.addStudent(studentRegisterDTO);
+            ApiResponse<String> response = new ApiResponse<>(
+                    HttpStatus.OK.value(),
+                    "Estudiante registrado correctamente",
+                    "Id: " + studentRegisterDTO.getIdStudent()
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        } catch (UserManagementException e) {
+            ApiResponse<String> response = new ApiResponse<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Error al registrar el estudiante",
+                    e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @PostMapping("/admin")
     public ResponseEntity<ApiResponse<String>> adminRegister(@RequestBody AdminRegisterDTO adminRegisterDTO){
-        userService.addAdministrator(adminRegisterDTO);
-        ApiResponse<String> response = new ApiResponse<>(
-                HttpStatus.OK.value(),
+        try {
+            userService.addAdministrator(adminRegisterDTO);
+            ApiResponse<String> response = new ApiResponse<>(
+                    HttpStatus.OK.value(),
                     "Administrador registrado correctamente",
-                "Id: " + adminRegisterDTO.getIdAdmin()
-        );
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+                    "Id: " + adminRegisterDTO.getIdAdmin()
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(response);
+        }catch (UserManagementException e) {
+            ApiResponse<String> response = new ApiResponse<>(
+                    HttpStatus.BAD_REQUEST.value(),
+                    "Error al registrar al administrador",
+                    e.getMessage()
+            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+        }
     }
 
     @PutMapping()
