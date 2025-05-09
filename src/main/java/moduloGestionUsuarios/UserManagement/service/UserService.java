@@ -148,7 +148,7 @@ public class UserService implements UserServiceInterface {
         
         if (userDTO.getFullName() != null) {
             List<Student> users = studentRepository.findByFullName(userDTO.getFullName());
-            List<Administrator> admins = administratorRepository.findFullname(userDTO.getFullName());
+            List<Administrator> admins = administratorRepository.findByFullname(userDTO.getFullName());
             userlist.addAll(userNameNotNull(users,admins,userlist));
         }
         if (userDTO.getAcademicProgram() != null) {
