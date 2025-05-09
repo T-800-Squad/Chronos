@@ -74,33 +74,4 @@ public class UserServiceTest {
         EmergencyContact contact = saved.getEmergencyContacts().get(0);
         assert contact.getFullName().equals("Carlos Pérez");
     }
-
-    /*@Test
-    public void testAddAdministrator() {
-        Administrator admin = new Administrator();
-        admin.setIdAdmin("admin001");
-        admin.setFullName("Ana Gómez");
-        admin.setEmailAddress("ana@example.com");
-        admin.setContactNumber("3001234567");
-        admin.setTypeId("CC");
-        admin.setRole("Coordinadora");
-        admin.setSpecialty("Ingeniería de Sistemas");
-        admin.setAdminPassword("adminPass");
-
-        when(passwordEncoder.encode("adminPass")).thenReturn("encodedAdminPass");
-        when(administratorRepository.save(any(Administrator.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-        Administrator savedAdmin = userService.addAdministrator(admin);
-
-        assert savedAdmin.getFullName().equals("Ana Gómez");
-        assert savedAdmin.getAdminPassword().equals("encodedAdminPass");
-
-        ArgumentCaptor<Administrator> adminCaptor = ArgumentCaptor.forClass(Administrator.class);
-        verify(administratorRepository, times(1)).save(adminCaptor.capture());
-
-        Administrator captured = adminCaptor.getValue();
-        assert captured.getIdAdmin().equals("admin001");
-        assert captured.getEmailAddress().equals("ana@example.com");
-    }*/
-
 }

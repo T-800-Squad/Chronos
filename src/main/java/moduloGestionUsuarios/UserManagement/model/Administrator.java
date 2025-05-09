@@ -40,7 +40,7 @@ public class Administrator {
             joinColumns = @JoinColumn(name = "id_admin"),
             inverseJoinColumns = @JoinColumn(name = "id_schedule")
     )
-    private List<Schedule> schedules = new ArrayList<>();
+    private List<Schedule> schedules;
 
     public void setIdAdmin(String idAdmin) {
         this.idAdmin = idAdmin;

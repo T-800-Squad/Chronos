@@ -3,18 +3,12 @@ package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-import moduloGestionUsuarios.UserManagement.UserManagementException;
+import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.*;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
-
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
-import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
-import moduloGestionUsuarios.UserManagement.model.Student;
-import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
-import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
-
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,8 +35,14 @@ public class UserService implements UserServiceInterface {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public void addStudent(StudentRegisterDTO studentRegisterDTO){
-        Student student = new Student();
+    public void addStudent(StudentRegisterDTO studentRegisterDTO) throws UserManagementException {
+        if (studentRepository.findByEmailAddress(studentRegisterDTO.getEmailAddress()).isPresent()) {
+            throw new UserManagementException("Ya existe un estudiante con ese correo electrónico");
+        }
+
+        if (studentRepository.findById(studentRegisterDTO.getIdStudent()).isPresent()) {
+            throw new UserManagementException("Ya existe un estudiante con ese ID");
+        }Student student = new Student();
 
         student.setIdStudent(studentRegisterDTO.getIdStudent());
         student.setCodeStudent(studentRegisterDTO.getCodeStudent());
@@ -68,7 +68,14 @@ public class UserService implements UserServiceInterface {
         studentRepository.save(student);
     }
 
-    public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO){
+    public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO) throws UserManagementException {
+        if (administratorRepository.findByEmailAddress(adminRegisterDTO.getEmailAddress()).isPresent()) {
+            throw new UserManagementException("Ya existe un administrador con ese correo electrónico");
+        }
+
+        if (administratorRepository.findById(adminRegisterDTO.getIdAdmin()).isPresent()) {
+            throw new UserManagementException("Ya existe un administrador con ese ID");
+        }
         Administrator administrator = new Administrator();
 
         administrator.setContactNumber(adminRegisterDTO.getContactNumber());
@@ -83,7 +90,7 @@ public class UserService implements UserServiceInterface {
 
         List<Schedule> scheduleList = new ArrayList<>();
         for (Integer scheduleId : adminRegisterDTO.getSchedule()) {
-            scheduleRepository.findById(String.valueOf(scheduleId)).ifPresent(scheduleList::add);
+            scheduleRepository.findById(scheduleId).ifPresent(scheduleList::add);
         }
         administrator.setSchedules(scheduleList);
 

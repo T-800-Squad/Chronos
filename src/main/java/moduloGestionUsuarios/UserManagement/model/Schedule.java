@@ -11,6 +11,7 @@ public class Schedule {
 
     @Column(name="id_schedule")
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idSchedule;
 
     @Column(name="day_of_week")
