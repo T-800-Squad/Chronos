@@ -1,16 +1,17 @@
 package moduloGestionUsuarios.UserManagement.service;
 
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
+import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
+import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
-import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
-import moduloGestionUsuarios.UserManagement.model.Student;
+import moduloGestionUsuarios.UserManagement.model.Role;
+import moduloGestionUsuarios.UserManagement.model.Specialty;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
-import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
-import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
@@ -19,59 +20,72 @@ public class UserServiceTest {
     private UserService userService;
 
     @Mock
-    private StudentRepositoryJPA studentRepository;
-
-    @Mock
     private AdministratorRepositoryJPA administratorRepository;
-
-    @Mock
-    private EmergencyContactRepositoryJPA emergencyContactRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Captor
-    private ArgumentCaptor<Student> studentCaptor;
-
     @BeforeEach
-    public void setup() {
+    public void setUp() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void testAddStudent() {
+    public void shouldAddAdministratorSuccessfully() throws UserManagementException {
+        AdminRegisterDTO dto = new AdminRegisterDTO();
+        dto.setIdAdmin("A123");
+        dto.setTypeId("CC");
+        dto.setFullName("Carlos Torres");
+        dto.setContactNumber("1234567890");
+        dto.setEmailAddress("carlos@mail.escuelaing.edu.co");
+        dto.setAdminPassword("securepass");
+        dto.setRole("ADMIN");
 
-        StudentRegisterDTO dto = new StudentRegisterDTO();
-        dto.setIdStudent("123");
-        dto.setCodeStudent("STU001");
-        dto.setStudentPassword("pass123");
-        dto.setAddress("Calle Falsa 123");
-        dto.setBirthDate(java.time.LocalDate.of(2000, 1, 1));
-        dto.setAcademicProgram("Ingeniería");
-        dto.setContactNumber("3210000000");
-        dto.setEmailAddress("student@example.com");
-        dto.setTypeIdStudent("CC");
-        dto.setFullNameStudent("Juan Pérez");
+        when(passwordEncoder.encode("securepass")).thenReturn("hashedPass");
+        when(administratorRepository.save(any(Administrator.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        dto.setIdContact("456");
-        dto.setFullNameContact("Carlos Pérez");
-        dto.setTypeIdContact("CC");
-        dto.setPhoneNumber("3101234567");
-        dto.setRelationship("Padre");
+        Administrator savedAdmin = userService.addAdministrator(dto);
 
-        when(passwordEncoder.encode("pass123")).thenReturn("encodedPass");
+        assertEquals("Carlos Torres", savedAdmin.getFullName());
+        assertEquals(Role.ADMIN, savedAdmin.getRole());
+        assertEquals("hashedPass", savedAdmin.getAdminPassword());
+    }
 
-        userService.addStudent(dto);
+    @Test
+    public void shouldThrowExceptionWhenDoctorWithoutSpecialty() {
+        AdminRegisterDTO dto = new AdminRegisterDTO();
+        dto.setIdAdmin("1014567891");
+        dto.setTypeId("CC");
+        dto.setFullName("Dra. Ana Ruiz");
+        dto.setContactNumber("987654321");
+        dto.setEmailAddress("ana@mail.escuelaing.edu.co");
+        dto.setAdminPassword("medicpass");
+        dto.setRole("DOCTOR");
+        dto.setSpecialty(null);
 
-        verify(studentRepository, times(1)).save(studentCaptor.capture());
+        UserManagementException exception = assertThrows(UserManagementException.class,
+                () -> userService.addAdministrator(dto));
+        assertEquals("Error inesperado: La especialidad es obligatoria para el rol DOCTOR.", exception.getMessage());
+    }
 
-        Student saved = studentCaptor.getValue();
+    @Test
+    public void shouldSetSpecialtyWhenRoleIsDoctor() throws UserManagementException {
+        AdminRegisterDTO dto = new AdminRegisterDTO();
+        dto.setIdAdmin("D002");
+        dto.setTypeId("TI");
+        dto.setFullName("Dra. Laura García");
+        dto.setContactNumber("321654987");
+        dto.setEmailAddress("laura@mail.escuelaing.edu.co");
+        dto.setAdminPassword("docpass");
+        dto.setRole("DOCTOR");
+        dto.setSpecialty("PSICOLOGY");
 
-        assert saved.getIdStudent().equals("123");
-        assert saved.getStudentPassword().equals("encodedPass");
-        assert saved.getEmergencyContacts().size() == 1;
+        when(passwordEncoder.encode("docpass")).thenReturn("encodedDocPass");
+        when(administratorRepository.save(any(Administrator.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        EmergencyContact contact = saved.getEmergencyContacts().get(0);
-        assert contact.getFullName().equals("Carlos Pérez");
+        Administrator admin = userService.addAdministrator(dto);
+
+        assertEquals(Role.DOCTOR, admin.getRole());
+        assertEquals(Specialty.PSICOLOGY, admin.getSpecialty());
     }
 }
