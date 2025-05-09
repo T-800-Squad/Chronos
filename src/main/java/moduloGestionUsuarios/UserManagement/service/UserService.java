@@ -1,19 +1,27 @@
 package moduloGestionUsuarios.UserManagement.service;
 
+
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.*;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
+
+import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
+import moduloGestionUsuarios.UserManagement.model.Student;
+import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
+import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
+
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserServiceInterface {
@@ -82,6 +90,10 @@ public class UserService implements UserServiceInterface {
         return administratorRepository.save(administrator);
     }
 
+    public Optional<Student> findByEmailAddressStudent(String email){
+        return studentRepository.findByEmailAddress(email);
+    }
+
     public void updateStudent(UserUpdateDTO userUpdateDTO) {
         Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
@@ -106,5 +118,4 @@ public class UserService implements UserServiceInterface {
     public void deleteStudent(String idStudent) {
         studentRepository.deleteById(idStudent);
     }
-
 }
