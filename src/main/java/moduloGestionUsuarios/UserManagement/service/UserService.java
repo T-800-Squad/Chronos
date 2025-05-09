@@ -1,5 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
+import moduloGestionUsuarios.UserManagement.UserManagementException;
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
@@ -94,28 +95,76 @@ public class UserService implements UserServiceInterface {
         return studentRepository.findByEmailAddress(email);
     }
 
-    public UserDTO queryUser(UserDTO userDTO) {
+    public List<UserDTO> queryUser(UserDTO userDTO) {
+        List<UserDTO> userlist = new ArrayList<>();
+        
         if (userDTO.getFullName() != null) {
-            return studentRepository.findByFullName(userDTO.getFullName())
-                    .map(this::convertToDTO)
-                    .orElse(null);
+            List<Student> users = studentRepository.findByFullName(userDTO.getFullName());
+            List<Administrator> admins = administratorRepository.findFullname(userDTO.getFullName());
+            if (users.isEmpty() && admins.isEmpty()) {
+                throw new UserManagementException(UserManagementException.User_Not_Exist);
+            }
+            for (Administrator administrator : admins) {
+                userlist.add(convertToDTO(administrator));
+            }
+            for (Student user : users) {
+                userlist.add(convertToDTO(user));
+            }
         }
         if (userDTO.getAcademicProgram() != null) {
-            return studentRepository.findByAcademicProgram(userDTO.getAcademicProgram())
-                    .map(this::convertToDTO)
-                    .orElse(null);
+            List<Student> users = studentRepository.findByAcademicProgram(userDTO.getAcademicProgram());
+            List<UserDTO> programs = new ArrayList<>();
+            if (users.isEmpty()) {
+                throw new UserManagementException(UserManagementException.User_Not_Exist);
+            }
+            if (!userlist.isEmpty()) {
+                for (UserDTO u : userlist) {
+                    for (Student s : users) {
+                        if (u.equals(s)) {
+                            programs.add(u);
+                        } 
+                    }
+                }
+            } else {
+                userlist = programs;
+            }
+
+            if (programs.isEmpty()) {
+                throw new UserManagementException(UserManagementException.User_Not_Exist);
+            }
         }
         if (userDTO.getCodeStudent() != null) {
-            return studentRepository.findByCodeStudent(userDTO.getCodeStudent())
-                    .map(this::convertToDTO)
-                    .orElse(null);
+            List<Student> students = studentRepository.findByCodeStudent(userDTO.getCodeStudent());
+            if (students.isEmpty()) {
+                throw new UserManagementException(UserManagementException.User_Not_Exist);
+            }
+            for (Student student : students) {
+                userlist.add(convertToDTO(student));
+            }
         }
         if (userDTO.getRole() != null) {
-            return administratorRepository.findByRole(userDTO.getRole())
-                    .map(this::convertToDTO)
-                    .orElse(null);
+            List<Administrator> admins = administratorRepository.findByRole(userDTO.getRole());
+            if (admins.isEmpty()) {
+                throw new UserManagementException(UserManagementException.User_Not_Exist);
+            }
+            for (Administrator admin : admins) {
+                userlist.add(convertToDTO(admin));
+            }
         }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No valid search parameters provided");
+        if (userDTO.getId() != null) {
+            List<Student> students = studentRepository.findByIdStudent(userDTO.getId());
+            List<Administrator> admins = administratorRepository.findByIdAdmin(userDTO.getId());
+            if (students.isEmpty() && admins.isEmpty()) {
+                throw new UserManagementException(UserManagementException.User_Not_Exist);
+            }
+            for (Student student : students) {
+                userlist.add(convertToDTO(student));
+            }
+            for (Administrator admin : admins) {
+                userlist.add(convertToDTO(admin));
+            }
+        }
+        return userlist;
     }
 
     private UserDTO convertToDTO(Student student) {

@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -48,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping("/query")
-    public UserDTO queryUser(@RequestBody UserDTO userDTO) {
+    public List<UserDTO> queryUser(@RequestBody UserDTO userDTO) {
         return userService.queryUser(userDTO);
     }
 
