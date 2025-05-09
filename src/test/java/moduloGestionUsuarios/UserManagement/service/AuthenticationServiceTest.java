@@ -58,7 +58,7 @@ public class AuthenticationServiceTest {
         try{
             authenticationService.authenticate(userLogDTO);
         }catch (UserManagementException e){
-            assertEquals("la contraseña es incorrecta",e.getMessage());
+            assertEquals("La contraseña es incorrecta",e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class AuthenticationServiceTest {
         try{
             authenticationService.authenticate(userLogDTO);
         }catch (UserManagementException e){
-            assertEquals("la contraseña es incorrecta",e.getMessage());
+            assertEquals("La contraseña es incorrecta",e.getMessage());
         }
     }
 
