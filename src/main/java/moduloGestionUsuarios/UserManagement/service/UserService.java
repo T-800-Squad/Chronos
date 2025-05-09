@@ -148,7 +148,7 @@ public class UserService implements UserServiceInterface {
         
         if (userDTO.getFullName() != null) {
             List<Student> users = studentRepository.findByFullName(userDTO.getFullName());
-            List<Administrator> admins = administratorRepository.findByFullname(userDTO.getFullName());
+            List<Administrator> admins = administratorRepository.findByFullName(userDTO.getFullName());
             userlist.addAll(userNameNotNull(users,admins,userlist));
         }
         if (userDTO.getAcademicProgram() != null) {
@@ -160,7 +160,7 @@ public class UserService implements UserServiceInterface {
             userlist = academicProgramAndCodeStudentNotNull(students,userlist);
         }
         if (userDTO.getRole() != null) {
-            List<Administrator> admins = administratorRepository.findByRole(userDTO.getRole());
+            List<Administrator> admins = administratorRepository.findByRole(Role.fromDescription(userDTO.getRole()));
             userlist = roleNotNull(admins,userlist);
         }
         if (userDTO.getId() != null) {

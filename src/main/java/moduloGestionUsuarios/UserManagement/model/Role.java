@@ -11,4 +11,12 @@ public enum Role {
     public String getDescription() {
         return description;
     }
+    public static Role fromDescription(String description) {
+        for (Role role : Role.values()) {
+            if (role.getDescription().equalsIgnoreCase(description)) {
+                return role;
+            }
+        }
+        throw new IllegalArgumentException("No se encontró un Role con la descripción: " + description);
+    }
 }
