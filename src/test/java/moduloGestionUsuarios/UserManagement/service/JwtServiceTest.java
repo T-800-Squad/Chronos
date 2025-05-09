@@ -15,6 +15,7 @@ public class JwtServiceTest {
     @Test
     public void testJwtTokenGenerateToStudent() {
         String token = jwtService.generateToken("test","test","test","test", Role.STUDENT);
+        token = "Bearer " + token;
         assertEquals("test",jwtService.getUserName(token));
         assertEquals("Student",jwtService.getRole(token));
         assertEquals("test",jwtService.getEmail(token));
@@ -24,6 +25,7 @@ public class JwtServiceTest {
     @Test
     public void testJwtTokenGenerateToAnotherRole() {
         String token = jwtService.generateToken("test","test","test","test",Role.ADMIN);
+        token = "Bearer " + token;
         assertEquals("Administrator",jwtService.getRole(token));
         assertEquals("test",jwtService.getUserName(token));
         assertEquals("test",jwtService.getEmail(token));
