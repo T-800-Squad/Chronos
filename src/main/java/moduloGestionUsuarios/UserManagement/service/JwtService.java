@@ -32,22 +32,27 @@ public class JwtService {
     }
 
     public String getId(String token) {
+        token = token.substring(7);
         return JWT.decode(token).getClaim("id").asString();
     }
 
     public String getUserName(String token) {
+        token = token.substring(7);
         return JWT.decode(token).getClaim("userName").asString();
     }
 
     public String getRole(String token) {
+        token = token.substring(7);
         return JWT.decode(token).getClaim("role").asString();
     }
 
     public String getEmail(String token) {
+        token = token.substring(7);
         return JWT.decode(token).getClaim("email").asString();
     }
 
     public String getName(String token) {
+        token = token.substring(7);
         return JWT.decode(token).getClaim("name").asString();
     }
 
