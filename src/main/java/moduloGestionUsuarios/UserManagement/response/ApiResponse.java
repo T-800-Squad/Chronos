@@ -1,5 +1,11 @@
 package moduloGestionUsuarios.UserManagement.response;
 
+/**
+ * Generic wrapper for API responses.
+ * Encapsulates the HTTP status code, a message, and any data returned by the server.
+ *
+ * @param <T> The type of the data contained in the response.
+ */
 public class ApiResponse<T> {
     private int status;
     private String message;

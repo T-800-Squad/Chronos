@@ -31,7 +31,10 @@ import java.util.List;
 
 import org.springframework.dao.DataIntegrityViolationException;
 
-
+/**
+ * Service that handles user operations such as registering, updating, and deleting students and administrators.
+ * This includes managing relationships with emergency contacts and ensuring data integrity during operations.
+ */
 @Service
 public class UserService implements UserServiceInterface {
     @Autowired
@@ -50,6 +53,12 @@ public class UserService implements UserServiceInterface {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Registers a new student along with their emergency contact information.
+     *
+     * @param studentRegisterDTO DTO containing the student and emergency contact data.
+     * @throws UserManagementException If a data integrity violation occurs or another unexpected error happens.
+     */
     public void addStudent(StudentRegisterDTO studentRegisterDTO) throws UserManagementException {
         try {
             Student student = new Student();
@@ -83,6 +92,14 @@ public class UserService implements UserServiceInterface {
         }
     }
 
+    /**
+     * Registers a new administrator.
+     * If the administrator's role is DOCTOR, a specialty must also be provided.
+     *
+     * @param adminRegisterDTO DTO containing administrator registration data.
+     * @return The saved {@link Administrator} entity.
+     * @throws UserManagementException If required fields are missing or a data error occurs.
+     */
     public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO) throws UserManagementException {
         try {
             Administrator administrator = new Administrator();
@@ -117,7 +134,11 @@ public class UserService implements UserServiceInterface {
         }
     }
 
-
+    /**
+     * Updates student and emergency contact information.
+     *
+     * @param userUpdateDTO DTO containing updated student and contact information.
+     */
     public void updateStudent(UserUpdateDTO userUpdateDTO) {
         Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
@@ -139,11 +160,13 @@ public class UserService implements UserServiceInterface {
         emergencyContactRepository.save(emergencyContact);
     }
 
+    /**
+     * Deletes a student by ID.
+     *
+     * @param idStudent The ID of the student to delete.
+     */
     public void deleteStudent(String idStudent) {
         studentRepository.deleteById(idStudent);
     }
-    
 
-    
-    
 }

@@ -1,6 +1,9 @@
 package moduloGestionUsuarios.UserManagement.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 
@@ -19,6 +22,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for managing user-related operations such as updating, deleting,
+ * and querying user data.
+ */
+@Tag(name = "User Controller", description = "Operaciones relacionadas con usuarios (estudiantes y administradores)")
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -26,17 +34,20 @@ public class UserController {
     private UserServiceInterface userService;
     @Autowired
     private QueryServiceInterface queryService;
+
+    @Operation(summary = "Actualizar usuario", description = "Actualiza la información de un estudiante y su contacto de emergencia.")
     @PutMapping()
     public ResponseEntity<ApiResponse<String>> update(@RequestBody UserUpdateDTO userUpdateDTO){
         userService.updateStudent(userUpdateDTO);
-        ApiResponse<String> respnse = new ApiResponse<String>(
+        ApiResponse<String> response = new ApiResponse<String>(
                 HttpStatus.OK.value(),
-                "Usuario Eliminado",
+                "Usuario Actualizado",
                 "id" + userUpdateDTO.getIdStudent()
         );
-        return ResponseEntity.ok(respnse);
+        return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Eliminar estudiante", description = "Elimina un estudiante por su ID.")
     @DeleteMapping("/{idStudent}")
     public ResponseEntity<ApiResponse<String>> deleteStudent(@PathVariable String idStudent) {
         userService.deleteStudent(idStudent);
@@ -48,6 +59,7 @@ public class UserController {
         return ResponseEntity.ok(respnse);
     }
 
+    @Operation(summary = "Consultar usuarios", description = "Consulta estudiantes o administradores con base en filtros específicos.")
     @PostMapping("/query")
     public ResponseEntity<ApiResponse<List<UserDTO>>> queryUser(@RequestBody UserDTO userDTO) throws UserManagementException {
         ApiResponse<List<UserDTO>> response = new ApiResponse<>(
@@ -57,5 +69,4 @@ public class UserController {
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-
 }
