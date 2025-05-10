@@ -60,6 +60,9 @@ public class UserService implements UserServiceInterface {
      * @throws UserManagementException If a data integrity violation occurs or another unexpected error happens.
      */
     public void addStudent(StudentRegisterDTO studentRegisterDTO) throws UserManagementException {
+        if(studentRepository.existsById(studentRegisterDTO.getIdStudent())){
+            throw new UserManagementException(UserManagementException.Student_Exist);
+        }
         try {
             Student student = new Student();
 
@@ -101,6 +104,9 @@ public class UserService implements UserServiceInterface {
      * @throws UserManagementException If required fields are missing or a data error occurs.
      */
     public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO) throws UserManagementException {
+        if(administratorRepository.existsById(adminRegisterDTO.getIdAdmin())){
+            throw new UserManagementException(UserManagementException.Admin_Exist);
+        }
         try {
             Administrator administrator = new Administrator();
 
