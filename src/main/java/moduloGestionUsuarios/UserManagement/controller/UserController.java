@@ -48,7 +48,7 @@ public class UserController {
     }
 
     @Operation(summary = "Eliminar estudiante", description = "Elimina un estudiante por su ID.")
-    @DeleteMapping("/{idStudent}")
+    @DeleteMapping("/student/{idStudent}")
     public ResponseEntity<ApiResponse<String>> deleteStudent(@PathVariable String idStudent) {
         userService.deleteStudent(idStudent);
         ApiResponse<String> response = new ApiResponse<String>(
@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @Operation(summary = "Eliminar usuario", description = "Elimina un usuario por su ID.")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/admin/{id}")
     public ResponseEntity<ApiResponse<String>> deleteAdministrator(@PathVariable String id) {
         userService.deleteAdmin(id);
         ApiResponse<String> response = new ApiResponse<String>(
