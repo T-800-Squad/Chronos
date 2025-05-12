@@ -6,7 +6,7 @@ package moduloGestionUsuarios.UserManagement.model;
  * General Medicine, Odontology, Psycology.
  */
 public enum Specialty {
-    GENERAL_MEDICINE("General Medicine"),ODONTOLOGY("Odontology"),PSICOLOGY("Psycology");
+    GENERAL_MEDICINE("General Medicine"), DENTIST("Dentist"),PSYCHOLOGY("Psychology");
     private final String description;
     Specialty(String description) {
         this.description = description;

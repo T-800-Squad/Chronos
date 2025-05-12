@@ -52,11 +52,11 @@ public class AuthenticationService implements AuthenticationServiceInterface {
         Optional<Administrator> administrator = administratorRepository.findByEmailAddress(adminEmail);
         if (student.isPresent()) {
             Student stud = student.get();
-            return studentAuntenticate(password, userName, stud);
+            return studentAunthenticate(password, userName, stud);
         }
         if(administrator.isPresent()) {
             Administrator admin = administrator.get();
-            return administratorAuntenticate(password, userName, admin);
+            return administratorAunthenticate(password, userName, admin);
         }
         throw new UserManagementException(UserManagementException.User_Not_Found);
     }
@@ -70,9 +70,9 @@ public class AuthenticationService implements AuthenticationServiceInterface {
      * @return A JWT token if authentication is successful.
      * @throws UserManagementException if the password is incorrect.
      */
-    private String studentAuntenticate(String password,String userName,Student student) throws UserManagementException {
+    private String studentAunthenticate(String password,String userName,Student student) throws UserManagementException {
         if(passwordEncoder.matches(password,student.getStudentPassword())) {
-            return jwtService.generateToken(student.getIdStudent(),userName,student.getEmailAddress(),student.getFullName(), Role.STUDENT);
+            return jwtService.generateToken(student.getCodeStudent(),userName,student.getEmailAddress(),student.getFullName(), Role.STUDENT,"null");
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }
@@ -86,10 +86,14 @@ public class AuthenticationService implements AuthenticationServiceInterface {
      * @return A JWT token if authentication is successful.
      * @throws UserManagementException if the password is incorrect.
      */
-    private String administratorAuntenticate(String password,String userName,Administrator admin) throws UserManagementException {
+    private String administratorAunthenticate(String password,String userName,Administrator admin) throws UserManagementException {
 
         if(passwordEncoder.matches(password,admin.getAdminPassword())) {
-            return jwtService.generateToken(admin.getIdAdmin(),userName,admin.getEmailAddress(),admin.getFullName(), admin.getRole());
+            if(admin.getRole().equals(Role.DOCTOR)) {
+                return jwtService.generateToken(admin.getIdAdmin(), userName, admin.getEmailAddress(), admin.getFullName(), admin.getRole(), admin.getSpecialty().getDescription());
+            }else{
+                return jwtService.generateToken(admin.getIdAdmin(), userName, admin.getEmailAddress(), admin.getFullName(), admin.getRole(), "null");
+            }
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }

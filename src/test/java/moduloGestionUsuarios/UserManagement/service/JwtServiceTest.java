@@ -1,6 +1,7 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 import moduloGestionUsuarios.UserManagement.model.Role;
+import moduloGestionUsuarios.UserManagement.model.Specialty;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +15,7 @@ public class JwtServiceTest {
 
     @Test
     public void testJwtTokenGenerateToStudent() {
-        String token = jwtService.generateToken("test","test","test","test", Role.STUDENT);
+        String token = jwtService.generateToken("test","test","test","test", Role.STUDENT,"null");
         token = "Bearer " + token;
         assertEquals("test",jwtService.getUserName(token));
         assertEquals("Student",jwtService.getRole(token));
@@ -24,7 +25,7 @@ public class JwtServiceTest {
     }
     @Test
     public void testJwtTokenGenerateToAnotherRole() {
-        String token = jwtService.generateToken("test","test","test","test",Role.MEDICAL_SECRETARY);
+        String token = jwtService.generateToken("test","test","test","test",Role.MEDICAL_SECRETARY, Specialty.GENERAL_MEDICINE.getDescription());
         token = "Bearer " + token;
         assertEquals("Medical_Secretary",Role.MEDICAL_SECRETARY.getDescription());
         assertEquals("test",jwtService.getUserName(token));
