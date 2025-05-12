@@ -21,4 +21,5 @@ public interface UserServiceInterface {
     Administrator addAdministrator(AdminRegisterDTO administrator) throws UserManagementException;
     void updateStudent(UserUpdateDTO userUpdateDTO);
     void deleteStudent(String idStudent);
+    void deleteAdmin(String idAdmin);
 }

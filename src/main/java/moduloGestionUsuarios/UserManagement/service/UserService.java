@@ -175,4 +175,8 @@ public class UserService implements UserServiceInterface {
         studentRepository.deleteById(idStudent);
     }
 
+    public void deleteAdmin(String id) {
+        administratorRepository.deleteById(id);
+    }
+
 }

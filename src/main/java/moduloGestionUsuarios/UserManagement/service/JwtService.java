@@ -3,6 +3,7 @@ package moduloGestionUsuarios.UserManagement.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import moduloGestionUsuarios.UserManagement.model.Role;
+import moduloGestionUsuarios.UserManagement.model.Specialty;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -26,14 +27,16 @@ public class JwtService {
      * @param role     Role assigned to the user.
      * @return A signed JWT token containing the provided user claims.
      */
-    public String generateToken(String id,String userName, String email, String name, Role role) {
+    public String generateToken(String id, String userName, String email, String name, Role role, String specialty) {
         expirationTime = expirationTime(role);
+
         return JWT.create()
                 .withClaim("id", id)
                 .withClaim("userName",userName)
                 .withClaim("email",email)
                 .withClaim("name", name)
                 .withClaim("role", role.getDescription())
+                .withClaim("specialty",specialty)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                 .sign(Algorithm.HMAC256(SECRET_KEY));
     }
