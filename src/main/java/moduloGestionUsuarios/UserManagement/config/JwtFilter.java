@@ -40,7 +40,6 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/swagger-resources/**",
                 "/webjars/**"
         );
-
         // Si la ruta es una de las abiertas, continuar sin filtrar.
         if (openPaths.stream().anyMatch(path::startsWith)) {
             chain.doFilter(request, response);

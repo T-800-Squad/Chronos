@@ -24,9 +24,9 @@ public class JwtServiceTest {
     }
     @Test
     public void testJwtTokenGenerateToAnotherRole() {
-        String token = jwtService.generateToken("test","test","test","test",Role.ADMIN);
+        String token = jwtService.generateToken("test","test","test","test",Role.MEDICAL_SECRETARY);
         token = "Bearer " + token;
-        assertEquals("Administrator",jwtService.getRole(token));
+        assertEquals("Medical_Secretary",Role.MEDICAL_SECRETARY.getDescription());
         assertEquals("test",jwtService.getUserName(token));
         assertEquals("test",jwtService.getEmail(token));
         assertEquals("test",jwtService.getId(token));
