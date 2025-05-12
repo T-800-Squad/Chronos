@@ -51,12 +51,24 @@ public class UserController {
     @DeleteMapping("/{idStudent}")
     public ResponseEntity<ApiResponse<String>> deleteStudent(@PathVariable String idStudent) {
         userService.deleteStudent(idStudent);
-        ApiResponse<String> respnse = new ApiResponse<String>(
+        ApiResponse<String> response = new ApiResponse<String>(
                 HttpStatus.OK.value(),
                 "Usuario Eliminado",
                 "id" + idStudent
         );
-        return ResponseEntity.ok(respnse);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Eliminar usuario", description = "Elimina un usuario por su ID.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteAdministrator(@PathVariable String id) {
+        userService.deleteAdmin(id);
+        ApiResponse<String> response = new ApiResponse<String>(
+                HttpStatus.OK.value(),
+                "Usuario Eliminado",
+                "id" + id
+        );
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Consultar usuarios", description = "Consulta estudiantes o administradores con base en filtros específicos.")
