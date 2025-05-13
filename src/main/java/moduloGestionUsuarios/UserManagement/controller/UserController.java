@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import moduloGestionUsuarios.UserManagement.DTO.AdminUpdateDTO;
+
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 
@@ -35,7 +36,7 @@ public class UserController {
     private UserServiceInterface userService;
     @Autowired
     private QueryServiceInterface queryService;
-
+  
     @Operation(summary = "Actualizar usuario", description = "Actualiza la información de un estudiante y su contacto de emergencia.")
     @PutMapping()
     public ResponseEntity<ApiResponse<String>> update(@RequestBody UserUpdateDTO userUpdateDTO){
@@ -56,6 +57,18 @@ public class UserController {
                 HttpStatus.OK.value(),
                 "Administrador Actualizado",
                 "id" + adminUpdateDTO.getIdAdmin()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Actualizar usuario", description = "Actualiza la información de un estudiante y su contacto de emergencia.")
+    @PutMapping()
+    public ResponseEntity<ApiResponse<String>> update(@RequestBody UserUpdateDTO userUpdateDTO){
+        userService.updateStudent(userUpdateDTO);
+        ApiResponse<String> response = new ApiResponse<String>(
+                HttpStatus.OK.value(),
+                "Usuario Actualizado",
+                "id" + userUpdateDTO.getIdStudent()
         );
         return ResponseEntity.ok(response);
     }

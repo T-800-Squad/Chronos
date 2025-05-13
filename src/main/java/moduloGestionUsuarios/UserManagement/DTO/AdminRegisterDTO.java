@@ -2,6 +2,12 @@ package moduloGestionUsuarios.UserManagement.DTO;
 
 import java.util.List;
 
+/**
+ * Data Transfer Object (DTO) class used to encapsulate the data required to register an administrator
+ * and assign them a schedule.
+ * This DTO contains fields for the administrator's information such as ID, type of ID, name, specialty, role,
+ * contact information, and password. Additionally, it contains a list of schedule IDs that will be assigned to the administrator.
+ */
 public class AdminRegisterDTO {
     // Data Administrator
     private String idAdmin;

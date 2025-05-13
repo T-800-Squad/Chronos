@@ -78,7 +78,7 @@ public class UserServiceTest {
         dto.setEmailAddress("laura@mail.escuelaing.edu.co");
         dto.setAdminPassword("docpass");
         dto.setRole("DOCTOR");
-        dto.setSpecialty("PSICOLOGY");
+        dto.setSpecialty("PSYCHOLOGY");
 
         when(passwordEncoder.encode("docpass")).thenReturn("encodedDocPass");
         when(administratorRepository.save(any(Administrator.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -86,6 +86,6 @@ public class UserServiceTest {
         Administrator admin = userService.addAdministrator(dto);
 
         assertEquals(Role.DOCTOR, admin.getRole());
-        assertEquals(Specialty.PSICOLOGY, admin.getSpecialty());
+        assertEquals(Specialty.PSYCHOLOGY, admin.getSpecialty());
     }
 }
