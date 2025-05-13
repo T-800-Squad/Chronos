@@ -1,31 +1,24 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 
+import jakarta.transaction.Transactional;
 import moduloGestionUsuarios.UserManagement.DTO.*;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
-
 import moduloGestionUsuarios.UserManagement.model.Student;
-
-
-
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.*;
-
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.dao.DataIntegrityViolationException;
 
 /**
@@ -173,29 +166,25 @@ public class UserService implements UserServiceInterface {
      *
      * @param adminUpdateDTO DTO containing updated admin and new time slot.
      */
+    @Transactional
     public void addScheduleForAdmin(AdminUpdateDTO adminUpdateDTO) throws UserManagementException {
         Administrator administrator = administratorRepository.findById(adminUpdateDTO.getIdAdmin())
                 .orElseThrow(() -> new UserManagementException("Administrador no encontrado"));
+        List<Integer> newScheduleIds = adminUpdateDTO.getNewSchedule();
+        if (newScheduleIds != null) {
+            for (Integer scheduleId : newScheduleIds) {
+                Schedule schedule = scheduleRepository.findById(scheduleId)
+                        .orElseThrow(() -> new UserManagementException("Horario no encontrado: " + scheduleId));
 
-        List<Schedule> scheduleList = administrator.getSchedules();
-        List<Integer> notFoundSchedules = new ArrayList<>();
-
-        for (Integer scheduleId : adminUpdateDTO.getNewSchedule()) {
-            scheduleRepository.findById(scheduleId).ifPresentOrElse(schedule -> {
-                if (!scheduleList.contains(schedule)) {
-                    scheduleList.add(schedule);
+                if (!administrator.getSchedules().contains(schedule)) {
+                    administrator.getSchedules().add(schedule);
                 }
-            }, () -> notFoundSchedules.add(scheduleId));
+            }
+        } else {
+            System.out.println(">>> La lista de nuevos horarios es null.");
         }
-
-        if (!notFoundSchedules.isEmpty()) {
-            throw new UserManagementException("Horarios no encontrados: " + notFoundSchedules);
-        }
-
-        administrator.setSchedules(scheduleList);
         administratorRepository.save(administrator);
     }
-
 
     /**
      * Deletes a student by ID.

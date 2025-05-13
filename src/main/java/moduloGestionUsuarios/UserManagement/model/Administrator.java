@@ -78,13 +78,13 @@ public class Administrator {
      * This is a many-to-many relationship with the {@link Schedule} entity.
      * The relationship is represented by the {@code schedule_admin} join table.
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(
             name = "schedule_admin",
             joinColumns = @JoinColumn(name = "id_admin"),
             inverseJoinColumns = @JoinColumn(name = "id_schedule")
     )
-    private List<Schedule> schedules;
+    private List<Schedule> schedules = new ArrayList<>();;
 
     public void setIdAdmin(String idAdmin) {
         this.idAdmin = idAdmin;
