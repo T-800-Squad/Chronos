@@ -1,21 +1,37 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 
-import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
+import moduloGestionUsuarios.UserManagement.DTO.*;
+import moduloGestionUsuarios.UserManagement.model.Administrator;
+import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
+
+import moduloGestionUsuarios.UserManagement.model.Student;
+
+
+
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.*;
+
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
-import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.Optional;
 
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.dao.DataIntegrityViolationException;
+
+/**
+ * Service that handles user operations such as registering, updating, and deleting students and administrators.
+ * This includes managing relationships with emergency contacts and ensuring data integrity during operations.
+ */
 @Service
 public class UserService implements UserServiceInterface {
     @Autowired
@@ -34,7 +50,16 @@ public class UserService implements UserServiceInterface {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Registers a new student along with their emergency contact information.
+     *
+     * @param studentRegisterDTO DTO containing the student and emergency contact data.
+     * @throws UserManagementException If a data integrity violation occurs or another unexpected error happens.
+     */
     public void addStudent(StudentRegisterDTO studentRegisterDTO) throws UserManagementException {
+        if(studentRepository.existsById(studentRegisterDTO.getIdStudent())){
+            throw new UserManagementException(UserManagementException.Student_Exist);
+        }
         try {
             Student student = new Student();
 
@@ -67,7 +92,18 @@ public class UserService implements UserServiceInterface {
         }
     }
 
+    /**
+     * Registers a new administrator.
+     * If the administrator's role is DOCTOR, a specialty must also be provided.
+     *
+     * @param adminRegisterDTO DTO containing administrator registration data.
+     * @return The saved {@link Administrator} entity.
+     * @throws UserManagementException If required fields are missing or a data error occurs.
+     */
     public Administrator addAdministrator(AdminRegisterDTO adminRegisterDTO) throws UserManagementException {
+        if(administratorRepository.existsById(adminRegisterDTO.getIdAdmin())){
+            throw new UserManagementException(UserManagementException.Admin_Exist);
+        }
         try {
             Administrator administrator = new Administrator();
 
@@ -81,7 +117,12 @@ public class UserService implements UserServiceInterface {
             administrator.setRole(Role.valueOf(adminRegisterDTO.getRole().toUpperCase()));
 
             Role role = Role.valueOf(adminRegisterDTO.getRole().toUpperCase());
-            administrator.setRole(role);
+
+            List<Schedule> scheduleList = new ArrayList<>();
+            for (Integer scheduleId : adminRegisterDTO.getSchedule()) {
+                scheduleRepository.findById(scheduleId).ifPresent(scheduleList::add);
+            }
+            administrator.setSchedules(scheduleList);
 
             if (role == Role.DOCTOR) {
                 String specialtyStr = adminRegisterDTO.getSpecialty();
@@ -101,10 +142,11 @@ public class UserService implements UserServiceInterface {
         }
     }
 
-    public Optional<Student> findByEmailAddressStudent(String email){
-        return studentRepository.findByEmailAddress(email);
-    }
-
+    /**
+     * Updates student and emergency contact information.
+     *
+     * @param userUpdateDTO DTO containing updated student and contact information.
+     */
     public void updateStudent(UserUpdateDTO userUpdateDTO) {
         Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
@@ -126,7 +168,46 @@ public class UserService implements UserServiceInterface {
         emergencyContactRepository.save(emergencyContact);
     }
 
+    /**
+     * Updates admin with a new time slot.
+     *
+     * @param adminUpdateDTO DTO containing updated admin and new time slot.
+     */
+    public void addScheduleForAdmin(AdminUpdateDTO adminUpdateDTO) throws UserManagementException {
+        Administrator administrator = administratorRepository.findById(adminUpdateDTO.getIdAdmin())
+                .orElseThrow(() -> new UserManagementException("Administrador no encontrado"));
+
+        List<Schedule> scheduleList = administrator.getSchedules();
+        List<Integer> notFoundSchedules = new ArrayList<>();
+
+        for (Integer scheduleId : adminUpdateDTO.getNewSchedule()) {
+            scheduleRepository.findById(scheduleId).ifPresentOrElse(schedule -> {
+                if (!scheduleList.contains(schedule)) {
+                    scheduleList.add(schedule);
+                }
+            }, () -> notFoundSchedules.add(scheduleId));
+        }
+
+        if (!notFoundSchedules.isEmpty()) {
+            throw new UserManagementException("Horarios no encontrados: " + notFoundSchedules);
+        }
+
+        administrator.setSchedules(scheduleList);
+        administratorRepository.save(administrator);
+    }
+
+
+    /**
+     * Deletes a student by ID.
+     *
+     * @param idStudent The ID of the student to delete.
+     */
     public void deleteStudent(String idStudent) {
         studentRepository.deleteById(idStudent);
     }
+
+    public void deleteAdmin(String id) {
+        administratorRepository.deleteById(id);
+    }
+
 }
