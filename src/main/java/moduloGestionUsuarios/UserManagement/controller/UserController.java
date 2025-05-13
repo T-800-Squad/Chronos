@@ -4,6 +4,7 @@ package moduloGestionUsuarios.UserManagement.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import moduloGestionUsuarios.UserManagement.DTO.AdminUpdateDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 
@@ -43,6 +44,18 @@ public class UserController {
                 HttpStatus.OK.value(),
                 "Usuario Actualizado",
                 "id" + userUpdateDTO.getIdStudent()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Actualizar administrador", description = "Actualiza los horarios de un administrador.")
+    @PutMapping("/schedule")
+    public ResponseEntity<ApiResponse<String>> updateAdmin(@RequestBody AdminUpdateDTO adminUpdateDTO) throws UserManagementException {
+        userService.addScheduleForAdmin(adminUpdateDTO);
+        ApiResponse<String> response = new ApiResponse<String>(
+                HttpStatus.OK.value(),
+                "Administrador Actualizado",
+                "id" + adminUpdateDTO.getIdAdmin()
         );
         return ResponseEntity.ok(response);
     }

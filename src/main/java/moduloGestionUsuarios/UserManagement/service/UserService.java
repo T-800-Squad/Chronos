@@ -1,9 +1,7 @@
 package moduloGestionUsuarios.UserManagement.service;
 
 
-import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
+import moduloGestionUsuarios.UserManagement.DTO.*;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import moduloGestionUsuarios.UserManagement.model.EmergencyContact;
 
@@ -17,7 +15,6 @@ import moduloGestionUsuarios.UserManagement.model.*;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.EmergencyContactRepositoryJPA;
 import moduloGestionUsuarios.UserManagement.repository.ScheduleRepository;
-import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,7 +117,12 @@ public class UserService implements UserServiceInterface {
             administrator.setRole(Role.valueOf(adminRegisterDTO.getRole().toUpperCase()));
 
             Role role = Role.valueOf(adminRegisterDTO.getRole().toUpperCase());
-            administrator.setRole(role);
+
+            List<Schedule> scheduleList = new ArrayList<>();
+            for (Integer scheduleId : adminRegisterDTO.getSchedule()) {
+                scheduleRepository.findById(scheduleId).ifPresent(scheduleList::add);
+            }
+            administrator.setSchedules(scheduleList);
 
             if (role == Role.DOCTOR) {
                 String specialtyStr = adminRegisterDTO.getSpecialty();
@@ -165,6 +167,35 @@ public class UserService implements UserServiceInterface {
         studentRepository.save(student);
         emergencyContactRepository.save(emergencyContact);
     }
+
+    /**
+     * Updates admin with a new time slot.
+     *
+     * @param adminUpdateDTO DTO containing updated admin and new time slot.
+     */
+    public void addScheduleForAdmin(AdminUpdateDTO adminUpdateDTO) throws UserManagementException {
+        Administrator administrator = administratorRepository.findById(adminUpdateDTO.getIdAdmin())
+                .orElseThrow(() -> new UserManagementException("Administrador no encontrado"));
+
+        List<Schedule> scheduleList = administrator.getSchedules();
+        List<Integer> notFoundSchedules = new ArrayList<>();
+
+        for (Integer scheduleId : adminUpdateDTO.getNewSchedule()) {
+            scheduleRepository.findById(scheduleId).ifPresentOrElse(schedule -> {
+                if (!scheduleList.contains(schedule)) {
+                    scheduleList.add(schedule);
+                }
+            }, () -> notFoundSchedules.add(scheduleId));
+        }
+
+        if (!notFoundSchedules.isEmpty()) {
+            throw new UserManagementException("Horarios no encontrados: " + notFoundSchedules);
+        }
+
+        administrator.setSchedules(scheduleList);
+        administratorRepository.save(administrator);
+    }
+
 
     /**
      * Deletes a student by ID.

@@ -1,14 +1,10 @@
 package moduloGestionUsuarios.UserManagement.service;
 
-import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-
-import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
+import moduloGestionUsuarios.UserManagement.DTO.*;
 
 import moduloGestionUsuarios.UserManagement.model.Administrator;
 import java.util.List;
 
-import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 
 /**
@@ -22,4 +18,5 @@ public interface UserServiceInterface {
     void updateStudent(UserUpdateDTO userUpdateDTO);
     void deleteStudent(String idStudent);
     void deleteAdmin(String idAdmin);
+    void addScheduleForAdmin(AdminUpdateDTO adminUpdateDTO) throws UserManagementException;
 }
