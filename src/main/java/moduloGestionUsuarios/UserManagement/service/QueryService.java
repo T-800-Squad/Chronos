@@ -41,7 +41,7 @@ public class QueryService implements QueryServiceInterface{
         if (userDTO.getFullName() != null) {
             List<Student> users = studentRepository.findByFullName(userDTO.getFullName());
             List<Administrator> admins = administratorRepository.findByFullName(userDTO.getFullName());
-            userlist.addAll(userNameNotNull(users,admins,userlist));
+            userlist= userNameNotNull(users,admins,userlist);
         }
         if (userDTO.getAcademicProgram() != null) {
             List<Student> students = studentRepository.findByAcademicProgram(userDTO.getAcademicProgram());
@@ -159,6 +159,6 @@ public class QueryService implements QueryServiceInterface{
      * @return A DTO containing administrator information.
      */
     private UserDTO convertToDTO(Administrator admin) {
-        return new UserDTO(admin.getFullName(), admin.getSpecialty().getDescription(), admin.getIdAdmin(), admin.getRole().getDescription(), null);
+        return new UserDTO(admin.getFullName(),null,null, admin.getRole().getDescription(), admin.getIdAdmin());
     }
 }
