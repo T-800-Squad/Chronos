@@ -191,8 +191,9 @@ public class UserService implements UserServiceInterface {
      *
      * @param idStudent The ID of the student to delete.
      */
+    @Transactional
     public void deleteStudent(String idStudent) {
-        studentRepository.deleteById(idStudent);
+        studentRepository.deleteByIdStudent(idStudent);
     }
 
     public void deleteAdmin(String id) {

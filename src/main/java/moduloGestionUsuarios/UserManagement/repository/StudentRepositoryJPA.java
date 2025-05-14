@@ -19,4 +19,6 @@ public interface StudentRepositoryJPA extends JpaRepository<Student,String> {
     List<Student> findByAcademicProgram(String academicProgram);
     List<Student> findByCodeStudent(String codeStudent);
     List<Student> findByIdStudent(String idStudent);
+
+    void deleteByIdStudent(String idStudent);
 }

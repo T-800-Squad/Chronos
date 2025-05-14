@@ -77,10 +77,10 @@ public class Student {
      * The list of emergency contacts associated with the student.
      * This is mapped to the {@code student_contact} table via a many-to-many relationship.
      */
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     @JoinTable(
             name = "student_contact",
-            joinColumns = @JoinColumn(name = "code_student"),
+            joinColumns = @JoinColumn(name = "id_student"),
             inverseJoinColumns = @JoinColumn(name = "id_contact")
     )
     private List<EmergencyContact> emergencyContacts = new ArrayList<>();
