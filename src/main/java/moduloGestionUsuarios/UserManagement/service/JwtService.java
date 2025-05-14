@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Service
 public class JwtService {
-    private final String SECRET_KEY = "ContraseñaSuperSecreta123";
+    private final String SECRET_KEY = "supersecretpassword1234567891011121314";
     private long expirationTime;
 
     /**
