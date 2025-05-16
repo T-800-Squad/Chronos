@@ -60,22 +60,10 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "Eliminar estudiante", description = "Elimina un estudiante por su ID.")
-    @DeleteMapping("/student/{idStudent}")
-    public ResponseEntity<ApiResponse<String>> deleteStudent(@PathVariable String idStudent) {
-        userService.deleteStudent(idStudent);
-        ApiResponse<String> response = new ApiResponse<String>(
-                HttpStatus.OK.value(),
-                "Usuario Eliminado",
-                "id" + idStudent
-        );
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(summary = "Eliminar usuario", description = "Elimina un usuario por su ID.")
-    @DeleteMapping("/admin/{id}")
-    public ResponseEntity<ApiResponse<String>> deleteAdministrator(@PathVariable String id) {
-        userService.deleteAdmin(id);
+    @Operation(summary = "Eliminar Usuario", description = "Elimina un usuario por su ID.")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<String>> deleteUser(@PathVariable String id) throws UserManagementException{
+        userService.deleteUser(id);
         ApiResponse<String> response = new ApiResponse<String>(
                 HttpStatus.OK.value(),
                 "Usuario Eliminado",

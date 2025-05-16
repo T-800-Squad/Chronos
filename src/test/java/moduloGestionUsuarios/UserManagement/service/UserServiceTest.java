@@ -3,6 +3,7 @@ package moduloGestionUsuarios.UserManagement.service;
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.AdminUpdateDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
+import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.*;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
@@ -317,4 +318,140 @@ public class UserServiceTest {
             assertEquals("Error inesperado: La especialidad es obligatoria para el rol DOCTOR.", e.getMessage());
         }
     }
+
+    @Test
+    void testUpdateStudentSuccess() {
+        // Crear DTO
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setIdStudent("123");
+        dto.setAddress("Nueva dirección");
+        dto.setAcademicProgram("Nuevo programa");
+        dto.setContactNumber("1111111");
+        dto.setTypeIdStudent("TI");
+
+        dto.setIdContact("999");
+        dto.setFullNameContact("Nuevo Nombre");
+        dto.setTypeIdContact("CC");
+        dto.setPhoneNumber("3003003000");
+        dto.setRelationship("Hermano");
+
+        // Objetos actuales en la base de datos simulada
+        Student student = new Student();
+        student.setId("123");
+
+        EmergencyContact contact = new EmergencyContact();
+        contact.setId("999");
+
+        // Mock de los repositorios
+        when(studentRepository.findById("123")).thenReturn(Optional.of(student));
+        when(emergencyContactRepository.findById("999")).thenReturn(Optional.of(contact));
+
+        // Ejecutar el método
+        userService.updateStudent(dto);
+
+        // Verificar cambios en Student
+        assertEquals("Nueva dirección", student.getAddress());
+        assertEquals("Nuevo programa", student.getAcademicProgram());
+        assertEquals("1111111", student.getContactNumber());
+        assertEquals("TI", student.getTypeId());
+
+        // Verificar cambios en EmergencyContact
+        assertEquals("Nuevo Nombre", contact.getFullName());
+        assertEquals("CC", contact.getTypeId());
+        assertEquals("3003003000", contact.getPhoneNumber());
+        assertEquals("Hermano", contact.getRelationship());
+
+        verify(studentRepository).save(student);
+        verify(emergencyContactRepository).save(contact);
+    }
+
+    @Test
+    void testUpdateStudentThrowsWhenStudentNotFound() {
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setIdStudent("noExiste");
+        dto.setIdContact("999");
+
+        when(studentRepository.findById("noExiste")).thenReturn(Optional.empty());
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            userService.updateStudent(dto);
+        });
+
+        assertEquals("Estudiante no encontrado", thrown.getMessage());
+    }
+
+    @Test
+    void testUpdateStudentThrowsWhenContactNotFound() {
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setIdStudent("123");
+        dto.setIdContact("noExiste");
+
+        Student student = new Student();
+        student.setId("123");
+
+        when(studentRepository.findById("123")).thenReturn(Optional.of(student));
+        when(emergencyContactRepository.findById("noExiste")).thenReturn(Optional.empty());
+
+        RuntimeException thrown = assertThrows(RuntimeException.class, () -> {
+            userService.updateStudent(dto);
+        });
+
+        assertEquals("Contacto de emergencia no encontrado", thrown.getMessage());
+    }
+
+    @Test
+    void deleteUser_shouldDeleteStudentIfExists() throws UserManagementException {
+        String id = "student123";
+
+        when(studentRepository.existsByIdStudent(id)).thenReturn(true);
+
+        userService.deleteUser(id);
+
+        verify(studentRepository, times(1)).deleteByIdStudent(id);
+        verify(administratorRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void deleteUser_shouldDeleteAdminIfExists() throws UserManagementException {
+        String id = "admin123";
+
+        when(studentRepository.existsByIdStudent(id)).thenReturn(false);
+        when(administratorRepository.existsById(id)).thenReturn(true);
+
+        userService.deleteUser(id);
+
+        verify(administratorRepository, times(1)).deleteById(id);
+        verify(studentRepository, never()).deleteByIdStudent(any());
+    }
+
+    @Test
+    void deleteUser_shouldDeleteBothIfExist() throws UserManagementException {
+        String id = "sharedId";
+
+        when(studentRepository.existsByIdStudent(id)).thenReturn(true);
+        when(administratorRepository.existsById(id)).thenReturn(true);
+
+        userService.deleteUser(id);
+
+        verify(studentRepository, times(1)).deleteByIdStudent(id);
+        verify(administratorRepository, times(1)).deleteById(id);
+    }
+
+    @Test
+    void deleteUser_shouldThrowExceptionIfUserNotFound() {
+        String id = "notExist";
+
+        when(studentRepository.existsByIdStudent(id)).thenReturn(false);
+        when(administratorRepository.existsById(id)).thenReturn(false);
+
+        UserManagementException exception = assertThrows(UserManagementException.class, () -> {
+            userService.deleteUser(id);
+        });
+
+        assertEquals("No se encontró ningún usuario con el ID: " + id, exception.getMessage());
+        verify(studentRepository, never()).deleteByIdStudent(any());
+        verify(administratorRepository, never()).deleteById(any());
+    }
+
+
 }

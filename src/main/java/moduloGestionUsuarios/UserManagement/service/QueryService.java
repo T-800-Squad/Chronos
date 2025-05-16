@@ -46,6 +46,21 @@ public class QueryService implements QueryServiceInterface{
         String role = userDTO.getRole();
         String id = userDTO.getId();
 
+        if (academicProgram != null && fullName != null) {
+            List<Student> studentsByName = studentRepository.findByFullName(fullName);
+            List<Student> studentsByProgram = studentRepository.findByAcademicProgram(academicProgram);
+
+            List<Student> intersection = studentsByName.stream()
+                    .filter(studentsByProgram::contains)
+                    .collect(Collectors.toList());
+
+            if (intersection.isEmpty()) {
+                throw new UserManagementException("No se encontraron estudiantes que coincidan con ambos criterios");
+            }
+
+            return convertStudentsToDTO(intersection);
+        }
+
         if(academicProgram != null){
             List<Student> students = studentRepository.findByAcademicProgram(academicProgram);
             userDTOList = convertStudentsToDTO(students);
