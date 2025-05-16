@@ -72,7 +72,7 @@ public class AuthenticationService implements AuthenticationServiceInterface {
      */
     private String studentAunthenticate(String password,String userName,Student student) throws UserManagementException {
         if(passwordEncoder.matches(password,student.getStudentPassword())) {
-            return jwtService.generateToken(student.getCodeStudent(),userName,student.getEmailAddress(),student.getFullName(), Role.STUDENT,"null");
+            return jwtService.generateToken(student.getCodeStudent(),userName,student.getEmailAddress(),student.getFullName(), Role.STUDENT.name(),"null");
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }
@@ -90,9 +90,9 @@ public class AuthenticationService implements AuthenticationServiceInterface {
 
         if(passwordEncoder.matches(password,admin.getAdminPassword())) {
             if(admin.getRole().equals(Role.DOCTOR)) {
-                return jwtService.generateToken(admin.getIdAdmin(), userName, admin.getEmailAddress(), admin.getFullName(), admin.getRole(), admin.getSpecialty().getDescription());
+                return jwtService.generateToken(admin.getIdAdmin(), userName, admin.getEmailAddress(), admin.getFullName(), admin.getRole().name(), admin.getSpecialty().name());
             }else{
-                return jwtService.generateToken(admin.getIdAdmin(), userName, admin.getEmailAddress(), admin.getFullName(), admin.getRole(), "null");
+                return jwtService.generateToken(admin.getIdAdmin(), userName, admin.getEmailAddress(), admin.getFullName(), admin.getRole().name(), "null");
             }
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);

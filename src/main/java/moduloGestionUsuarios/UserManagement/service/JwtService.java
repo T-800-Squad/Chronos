@@ -27,7 +27,7 @@ public class JwtService {
      * @param role     Role assigned to the user.
      * @return A signed JWT token containing the provided user claims.
      */
-    public String generateToken(String id, String userName, String email, String name, Role role, String specialty) {
+    public String generateToken(String id, String userName, String email, String name, String role, String specialty) {
         expirationTime = expirationTime(role);
 
         return JWT.create()
@@ -35,7 +35,7 @@ public class JwtService {
                 .withClaim("userName",userName)
                 .withClaim("email",email)
                 .withClaim("name", name)
-                .withClaim("role", role.getDescription())
+                .withClaim("role", role)
                 .withClaim("specialty",specialty)
                 .withExpiresAt(new Date(System.currentTimeMillis() + expirationTime))
                 .sign(Algorithm.HMAC256(SECRET_KEY));
@@ -47,8 +47,9 @@ public class JwtService {
      * @param role The user's role.
      * @return Expiration time in milliseconds.
      */
-    private long expirationTime(Role role) {
-        if (role.equals(Role.MEDICAL_SECRETARY)) {
+    private long expirationTime(String role) {
+        Role roleEnum = Role.valueOf(role);
+        if (roleEnum.equals(Role.MEDICAL_SECRETARY)) {
             return 1000*60*60*8;
         }
         return 1000*60*60;

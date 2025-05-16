@@ -8,9 +8,10 @@ import moduloGestionUsuarios.UserManagement.model.Student;
  * This class is used for transferring user data (e.g., administrator or student) across the application.
  */
 public class UserDTO {
-    private String fullName;
     private String academicProgram;
     private String codeStudent;
+    private String userName;
+    private String fullName;
     private String role;
     private String id;
 
@@ -22,28 +23,11 @@ public class UserDTO {
         this.id = id;
     }
 
-    /**
-     * Compares the current instance with the specified object to determine equality.
-     * This method supports comparison with objects of type {@code Administrator} or {@code Student}.
-     * The comparison is performed by matching relevant attributes, ensuring that
-     * two instances represent the same entity.
-     *
-     * @param object The object to be compared with the current instance.
-     * @return {@code true} if the object is of a supported type and has identical attributes;
-     *         {@code false} otherwise.
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (object instanceof Administrator a) {
-            return a.getFullName().equals(fullName) && a.getRole().equals(role) && a.getIdAdmin().equals(id);
-        }
-        if (object instanceof Student s) {
-            return s.getFullName().equals(fullName) && s.getAcademicProgram().equals(academicProgram) && s.getCodeStudent().equals(codeStudent) && s.getIdStudent().equals(id);
-        }
-        return false;
-    }
 
     // Getters and Setters
+
+    public String getUserName() {return userName;}
+    public void setUserName(String userName) {this.userName = userName;}
     public String getFullName() {
         return fullName;
     }
