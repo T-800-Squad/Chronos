@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service that handles complex user queries across both students and administrators.
@@ -35,112 +37,114 @@ public class QueryService implements QueryServiceInterface{
      * @return A list of users matching the query.
      * @throws UserManagementException If no matching users are found for a given criterion.
      */
-    public List<UserDTO> query(UserDTO userDTO) throws UserManagementException{
-        List<UserDTO> userlist = new ArrayList<>();
+    public List<UserDTO> query(UserDTO userDTO) throws UserManagementException {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        String academicProgram = userDTO.getAcademicProgram();
+        String codeStudent = userDTO.getCodeStudent();
+        String userName = userDTO.getUserName();
+        String fullName = userDTO.getFullName();
+        String role = userDTO.getRole();
+        String id = userDTO.getId();
 
-        if (userDTO.getFullName() != null) {
-            List<Student> users = studentRepository.findByFullName(userDTO.getFullName());
-            List<Administrator> admins = administratorRepository.findByFullName(userDTO.getFullName());
-            userlist= userNameNotNull(users,admins,userlist);
+        if(academicProgram != null){
+            List<Student> students = studentRepository.findByAcademicProgram(academicProgram);
+            userDTOList = convertStudentsToDTO(students);
+            validateUserListNotEmpty(userDTOList);
         }
-        if (userDTO.getAcademicProgram() != null) {
-            List<Student> students = studentRepository.findByAcademicProgram(userDTO.getAcademicProgram());
-            userlist = academicProgramAndCodeStudentNotNull(students,userlist);
+        if(codeStudent != null){
+            Optional<Student> student = studentRepository.findByCodeStudent(codeStudent);
+            validateStudentOptionalNotEmpty(student);
+            userDTOList.add(convertToDTO(student.get()));
         }
-        if (userDTO.getCodeStudent() != null) {
-            List<Student> students = studentRepository.findByCodeStudent(userDTO.getCodeStudent());
-            userlist = academicProgramAndCodeStudentNotNull(students,userlist);
+        if(userName != null){
+            Optional<Student> optionalStudent = studentRepository.findByEmailAddress((userName+"@mail.escuelaing.edu.co"));
+            Optional<Administrator> administratorOptional = administratorRepository.findByEmailAddress((userName+"@escuelaing.edu.co"));
+            validateOptionalsNotEmpty(userDTOList,optionalStudent, administratorOptional);
         }
-        if (userDTO.getRole() != null) {
-            List<Administrator> admins = administratorRepository.findByRole(Role.fromDescription(userDTO.getRole()));
-            userlist = roleNotNull(admins,userlist);
+        if(fullName != null){
+            userDTOList = findByFullName(fullName);
         }
-        if (userDTO.getId() != null) {
-            List<Student> students = studentRepository.findByIdStudent(userDTO.getId());
-            List<Administrator> admins = administratorRepository.findByIdAdmin(userDTO.getId());
-            userlist = academicProgramAndCodeStudentNotNull(students,userlist);
-            userlist = roleNotNull(admins,userlist);
-        }
-        return userlist;
-    }
-
-    /**
-     * Filters and adds users and administrators with matching full names.
-     *
-     * @param users     List of matching students.
-     * @param admins    List of matching administrators.
-     * @param userlist  List where matches will be added.
-     * @return A list with added matching users.
-     * @throws UserManagementException If no matches are found.
-     */
-    private List<UserDTO> userNameNotNull(List<Student> users, List<Administrator> admins,List<UserDTO> userlist) throws UserManagementException{
-        if (users.isEmpty() && admins.isEmpty()) {
-            throw new UserManagementException(UserManagementException.User_Not_Exist);
-        }
-        for (Administrator administrator : admins) {
-            userlist.add(convertToDTO(administrator));
-        }
-        for (Student user : users) {
-            userlist.add(convertToDTO(user));
-        }
-        return userlist;
-    }
-
-    /**
-     * Filters students by academic program or code if the initial user list is not empty.
-     *
-     * @param students  List of students matching the current filter.
-     * @param userlist  Current list of filtered users.
-     * @return A filtered list of users matching both previous and current criteria.
-     * @throws UserManagementException If no students match or the filter yields no overlap.
-     */
-    private List<UserDTO> academicProgramAndCodeStudentNotNull(List<Student> students, List<UserDTO> userlist)throws UserManagementException{
-        List<UserDTO> programs = new ArrayList<>();
-        if (students.isEmpty()) {
-            throw new UserManagementException(UserManagementException.User_Not_Exist);
-        }
-        if (!userlist.isEmpty()) {
-            for (UserDTO u : userlist) {
-                for (Student s : students) {
-                    if (u.equals(s)) {
-                        programs.add(u);
-                    }
-                }
+        if(role != null){
+            if("Student".equals(role)){
+                List<Student> students = studentRepository.findAll();
+                userDTOList = convertStudentsToDTO(students);
+            }else{
+                String stringRole = role.toUpperCase();
+                List<Administrator> administrators = administratorRepository.findByRole(Role.valueOf(stringRole));
+                userDTOList = convertAdministratorsToDTO(administrators);
             }
         }
-        if (programs.isEmpty()) {
-            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        if(id != null){
+            Optional<Student> student = studentRepository.findByIdStudent(id);
+            Optional<Administrator> administrator = administratorRepository.findByIdAdmin(id);
+            validateOptionalsNotEmpty(userDTOList,student,administrator);
         }
-        return programs;
+        return userDTOList;
+
     }
 
-    /**
-     * Filters administrators by role if the initial user list is not empty.
-     *
-     * @param admins    List of administrators matching the role.
-     * @param userlist  Current list of filtered users.
-     * @return A filtered list of users matching both previous and current criteria.
-     * @throws UserManagementException If no administrators match or the filter yields no overlap.
-     */
-    private List<UserDTO> roleNotNull(List<Administrator> admins, List<UserDTO> userlist)throws UserManagementException{
-        List<UserDTO> programs = new ArrayList<>();
-        if (admins.isEmpty()) {
-            throw new UserManagementException(UserManagementException.User_Not_Exist);
-        }
-        if (!userlist.isEmpty()) {
-            for (UserDTO u : userlist) {
-                for (Administrator s : admins) {
-                    if (u.equals(s)) {
-                        programs.add(u);
-                    }
-                }
-            }
-        }
-        if (programs.isEmpty()) {
-            throw new UserManagementException(UserManagementException.User_Not_Exist);
-        }
-        return programs;
+    private List<UserDTO> findByFullName(String fullName) throws UserManagementException {
+        List<Student> students = studentRepository.findByFullName(fullName);
+        List<Administrator> administrators = administratorRepository.findByFullName(fullName);
+        return joinUserList(students,administrators);
     }
+
+
+    private List<UserDTO> joinUserList(List<Student> students, List<Administrator> administrators) throws UserManagementException {
+        List<UserDTO> userDTOList;
+        List<UserDTO> studentDTOList = convertStudentsToDTO(students);
+        List<UserDTO> administratorDTOList = convertAdministratorsToDTO(administrators);
+        validateUsersListNotEmpty(studentDTOList,administratorDTOList);
+        userDTOList = studentDTOList;
+        userDTOList.addAll(administratorDTOList);
+        return userDTOList;
+    }
+
+    private List<UserDTO> convertStudentsToDTO(List<Student> students) throws UserManagementException {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for(Student student : students){
+            userDTOList.add(convertToDTO(student));
+        }
+        return userDTOList;
+    }
+    private List<UserDTO> convertAdministratorsToDTO(List<Administrator> administrators) throws UserManagementException {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for(Administrator administrator : administrators){
+            userDTOList.add(convertToDTO(administrator));
+        }
+        return userDTOList;
+    }
+
+
+    private void validateUserListNotEmpty(List<UserDTO> userDTOList) throws UserManagementException {
+        if(userDTOList.isEmpty()){
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+    }
+    private void validateUsersListNotEmpty(List<UserDTO> studentDTOList, List<UserDTO> administratorDTOList) throws UserManagementException {
+        if(studentDTOList.isEmpty() && administratorDTOList.isEmpty()){
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+    }
+
+
+    private void validateStudentOptionalNotEmpty(Optional<Student> studentOptional) throws UserManagementException {
+        if(studentOptional.isEmpty()){
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+    }
+
+    private List<UserDTO> validateOptionalsNotEmpty(List<UserDTO> userDTOList ,Optional<Student> studentOptional, Optional<Administrator> administratorOptional) throws UserManagementException {
+        if(studentOptional.isEmpty() && administratorOptional.isEmpty()){
+            throw new UserManagementException(UserManagementException.User_Not_Exist);
+        }
+        studentOptional.ifPresent(student -> userDTOList.add(convertToDTO(student)));
+        administratorOptional.ifPresent(administrator -> userDTOList.add(convertToDTO(administrator)));
+        return userDTOList;
+    }
+
+
+
 
     /**
      * Converts a {@link Student} entity into a {@link UserDTO}.
@@ -159,6 +163,6 @@ public class QueryService implements QueryServiceInterface{
      * @return A DTO containing administrator information.
      */
     private UserDTO convertToDTO(Administrator admin) {
-        return new UserDTO(admin.getFullName(),null,null, admin.getRole().getDescription(), admin.getIdAdmin());
+        return new UserDTO(admin.getFullName(),null,null, admin.getRole().name(), admin.getIdAdmin());
     }
 }

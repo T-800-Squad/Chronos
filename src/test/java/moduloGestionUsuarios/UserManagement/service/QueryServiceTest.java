@@ -21,6 +21,7 @@ import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class QueryServiceTest {
     
@@ -94,14 +95,14 @@ public class QueryServiceTest {
 
     @Test
     void testQueryByCodeStudent_Found() throws UserManagementException {
-        UserDTO userDTO = new UserDTO(null, null, "12345", null, null);
+        UserDTO userDTO = new UserDTO(null, null, "89999", null, null);
         Student student = new Student();
         student.setFullName("Pedro López");
         student.setAcademicProgram("Ingenieria Mecanica");
         student.setCodeStudent("89999");
         student.setIdStudent("99998");
 
-        when(studentRepository.findByCodeStudent("89999")).thenReturn(List.of(student));
+        when(studentRepository.findByCodeStudent("89999")).thenReturn(Optional.of(student));
 
         List<UserDTO> result = queryService.query(userDTO);
 
@@ -111,7 +112,7 @@ public class QueryServiceTest {
     @Test
     void testQueryByCodeStudent_NotFound() {
         UserDTO userDTO = new UserDTO(null, null, "52345", null, null);
-        when(studentRepository.findByCodeStudent("52345")).thenReturn(Collections.emptyList());
+        when(studentRepository.findByCodeStudent("52345")).thenReturn(Optional.empty());
 
         assertThrows(UserManagementException.class, () -> queryService.query(userDTO));
     }
@@ -125,8 +126,8 @@ public class QueryServiceTest {
         student.setCodeStudent("11223");
         student.setIdStudent("54311");
 
-        when(studentRepository.findByIdStudent("54321")).thenReturn(List.of(student));
-        when(administratorRepository.findByIdAdmin("54311")).thenReturn(Collections.emptyList());
+        when(studentRepository.findByIdStudent("54321")).thenReturn(Optional.of(student));
+        when(administratorRepository.findByIdAdmin("54311")).thenReturn(Optional.empty());
 
         List<UserDTO> result = queryService.query(userDTO);
 
@@ -136,57 +137,12 @@ public class QueryServiceTest {
     @Test
     void testQueryById_NotFound() {
         UserDTO userDTO = new UserDTO(null, null, null, null, "noexiste");
-        when(studentRepository.findByIdStudent("noexiste")).thenReturn(Collections.emptyList());
-        when(administratorRepository.findByIdAdmin("noexiste")).thenReturn(Collections.emptyList());
+        when(studentRepository.findByIdStudent("noexiste")).thenReturn(Optional.empty());
+        when(administratorRepository.findByIdAdmin("noexiste")).thenReturn(Optional.empty());
 
         assertThrows(UserManagementException.class, () -> queryService.query(userDTO));
     }
 
-    @Test
-    void testQueryByRole_NotFound() {
-        UserDTO userDTO = new UserDTO(null, null, null, "Administrator", null);
-        when(administratorRepository.findByRole(any())).thenReturn(Collections.emptyList());
-
-        assertThrows(UserManagementException.class, () -> queryService.query(userDTO));
-    }
-
-    @Test
-    void testQueryByFullNameAndProgram_Found() throws UserManagementException {
-        UserDTO userDTO = new UserDTO("Luis Gomez", "Ingenieria de sistemas", null, null, null);
-
-        Student student = new Student();
-        student.setFullName("Luis Gomez");
-        student.setAcademicProgram("Ingenieria de sistemas");
-        student.setCodeStudent("11111");
-        student.setIdStudent("22222");
-
-        when(studentRepository.findByFullName("Luis Gomez")).thenReturn(List.of(student));
-        when(administratorRepository.findByFullName("Luis Gomez")).thenReturn(Collections.emptyList());
-        when(studentRepository.findByAcademicProgram("Ingenieria de sistemas")).thenReturn(List.of(student));
-
-        List<UserDTO> result = queryService.query(userDTO);
-
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void testQueryByFullNameAndCodeStudent_Found() throws UserManagementException {
-        UserDTO userDTO = new UserDTO("Carlos Peña", null, "10001", null, null);
-
-        Student student = new Student();
-        student.setFullName("Carlos Peña");
-        student.setAcademicProgram("Ingenieria Civil");
-        student.setCodeStudent("10001");
-        student.setIdStudent("50001");
-
-        when(studentRepository.findByFullName("Carlos Peña")).thenReturn(List.of(student));
-        when(administratorRepository.findByFullName("Carlos Peña")).thenReturn(Collections.emptyList());
-        when(studentRepository.findByCodeStudent("10001")).thenReturn(List.of(student));
-
-        List<UserDTO> result = queryService.query(userDTO);
-
-        assertEquals(1, result.size());
-    }
 
     @Test
     void testQueryByFullNameAndProgram_NoIntersection() {

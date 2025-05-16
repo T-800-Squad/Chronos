@@ -17,5 +17,5 @@ public interface AdministratorRepositoryJPA extends JpaRepository<Administrator,
     Optional<Administrator> findByEmailAddress(String email);
     List<Administrator> findByRole(Role role);
     List<Administrator> findByFullName(String fullname);
-    List<Administrator> findByIdAdmin(String idAdmin);
+    Optional<Administrator> findByIdAdmin(String idAdmin);
 }
