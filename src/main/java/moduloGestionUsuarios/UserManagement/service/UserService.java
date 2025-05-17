@@ -189,15 +189,25 @@ public class UserService implements UserServiceInterface {
     /**
      * Deletes a student by ID.
      *
-     * @param idStudent The ID of the student to delete.
+     * @param id The ID of the student or administrator to delete.
      */
     @Transactional
-    public void deleteStudent(String idStudent) {
-        studentRepository.deleteByIdStudent(idStudent);
-    }
+    public void deleteUser(String id) throws UserManagementException {
+        boolean eliminado = false;
 
-    public void deleteAdmin(String id) {
-        administratorRepository.deleteById(id);
+        if (studentRepository.existsByIdStudent(id)) {
+            studentRepository.deleteByIdStudent(id);
+            eliminado = true;
+        }
+
+        if (administratorRepository.existsById(id)) {
+            administratorRepository.deleteById(id);
+            eliminado = true;
+        }
+
+        if (!eliminado) {
+            throw new UserManagementException("No se encontró ningún usuario con el ID: " + id);
+        }
     }
 
 }
