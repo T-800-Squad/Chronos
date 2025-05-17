@@ -3,6 +3,6 @@
 ## Integrantes
 - Lina Sanchez
 - Miguel Vanegas
-- Yojhan Toro
+- Yojhan Toro 
 - Ivan Cubillos
   
