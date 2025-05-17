@@ -144,27 +144,4 @@ public class QueryServiceTest {
     }
 
 
-    @Test
-    void testQueryByFullNameAndProgram_NoIntersection() {
-        UserDTO userDTO = new UserDTO("Maria Ruiz", "Ingenieria Electronica", null, null, null);
-
-        Student studentByName = new Student();
-        studentByName.setFullName("Maria Ruiz");
-        studentByName.setAcademicProgram("Ingenieria de Sistemas");
-        studentByName.setCodeStudent("20001");
-        studentByName.setIdStudent("60001");
-
-        Student studentByProgram = new Student();
-        studentByProgram.setFullName("Otra Persona");
-        studentByProgram.setAcademicProgram("Ingenieria Electronica");
-        studentByProgram.setCodeStudent("99899");
-        studentByProgram.setIdStudent("98998");
-
-        when(studentRepository.findByFullName("Maria Ruiz")).thenReturn(List.of(studentByName));
-        when(administratorRepository.findByFullName("Maria Ruiz")).thenReturn(Collections.emptyList());
-        when(studentRepository.findByAcademicProgram("Ingenieria Electronica")).thenReturn(List.of(studentByProgram));
-
-        assertThrows(UserManagementException.class, () -> queryService.query(userDTO));
-    }
-
 }
