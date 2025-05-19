@@ -143,5 +143,30 @@ public class QueryServiceTest {
         assertThrows(UserManagementException.class, () -> queryService.query(userDTO));
     }
 
+    @Test
+    void testQueryUserName_Found() throws UserManagementException {
+        UserDTO userDTO = new UserDTO(null, null, null, null, null);
+        userDTO.setUserName("xd");
+        Student student = new Student();
+        student.setFullName("Ana María");
+        student.setAcademicProgram("Matematicas");
+        student.setCodeStudent("11223");
+        student.setIdStudent("54311");
+
+        when(studentRepository.findByEmailAddress("xd@mail.escuelaing.edu.co")).thenReturn(Optional.of(student));
+
+        List<UserDTO> result = queryService.query(userDTO);
+
+        assertEquals(1, result.size());
+    }
+
+    void testQueryByUserName_NotFound() {
+        UserDTO userDTO = new UserDTO(null, null, null, null, null);
+        userDTO.setUserName("xd");
+        when(studentRepository.findByEmailAddress("xd@mail.escuelaing.edu.co")).thenReturn(Optional.empty());
+
+        assertThrows(UserManagementException.class, () -> queryService.query(userDTO));
+    }
+
 
 }
