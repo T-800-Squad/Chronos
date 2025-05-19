@@ -46,21 +46,6 @@ public class QueryService implements QueryServiceInterface{
         String role = userDTO.getRole();
         String id = userDTO.getId();
 
-        if (academicProgram != null && fullName != null) {
-            List<Student> studentsByName = studentRepository.findByFullName(fullName);
-            List<Student> studentsByProgram = studentRepository.findByAcademicProgram(academicProgram);
-
-            List<Student> intersection = studentsByName.stream()
-                    .filter(studentsByProgram::contains)
-                    .collect(Collectors.toList());
-
-            if (intersection.isEmpty()) {
-                throw new UserManagementException("No se encontraron estudiantes que coincidan con ambos criterios");
-            }
-
-            return convertStudentsToDTO(intersection);
-        }
-
         if(academicProgram != null){
             List<Student> students = studentRepository.findByAcademicProgram(academicProgram);
             userDTOList = convertStudentsToDTO(students);
@@ -149,13 +134,12 @@ public class QueryService implements QueryServiceInterface{
         }
     }
 
-    private List<UserDTO> validateOptionalsNotEmpty(List<UserDTO> userDTOList ,Optional<Student> studentOptional, Optional<Administrator> administratorOptional) throws UserManagementException {
+    private void validateOptionalsNotEmpty(List<UserDTO> userDTOList ,Optional<Student> studentOptional, Optional<Administrator> administratorOptional) throws UserManagementException {
         if(studentOptional.isEmpty() && administratorOptional.isEmpty()){
             throw new UserManagementException(UserManagementException.User_Not_Exist);
         }
         studentOptional.ifPresent(student -> userDTOList.add(convertToDTO(student)));
         administratorOptional.ifPresent(administrator -> userDTOList.add(convertToDTO(administrator)));
-        return userDTOList;
     }
 
 

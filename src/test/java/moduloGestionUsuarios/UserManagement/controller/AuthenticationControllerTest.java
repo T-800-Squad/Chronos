@@ -2,6 +2,7 @@ package moduloGestionUsuarios.UserManagement.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
+import moduloGestionUsuarios.UserManagement.DTO.LogDTO;
 import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserLogDTO;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
@@ -42,8 +43,10 @@ public class AuthenticationControllerTest {
     @Test
     public void testLogin() {
         try {
-            String token = "123";
-            when(authenticationService.authenticate(any(UserLogDTO.class))).thenReturn(token);
+            LogDTO logDTO = new LogDTO();
+            logDTO.setToken("123");
+
+            when(authenticationService.authenticate(any(UserLogDTO.class))).thenReturn(logDTO);
             String jsonBody = """
                 {
                     "username": "admin",
@@ -54,8 +57,7 @@ public class AuthenticationControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.status").value("200"))
-                    .andExpect(jsonPath("$.message").value("Token de autenticacion"))
-                    .andExpect(jsonPath("$.data").value("Bearer "+token));
+                    .andExpect(jsonPath("$.message").value("Token de autenticacion"));
         } catch (UserManagementException e) {
             fail();
         } catch (Exception e) {

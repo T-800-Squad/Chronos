@@ -3,11 +3,8 @@ package moduloGestionUsuarios.UserManagement.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.DTO.*;
 import moduloGestionUsuarios.UserManagement.response.ApiResponse;
-import moduloGestionUsuarios.UserManagement.DTO.UserLogDTO;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.service.AuthenticationServiceInterface;
 import moduloGestionUsuarios.UserManagement.service.UserService;
@@ -58,12 +55,12 @@ public class AuthenticationController {
 
     @Operation(summary = "Iniciar sesión", description = "Autentica a un usuario y devuelve un token JWT")
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<String>> login(@RequestBody UserLogDTO userLogDTO) throws UserManagementException {
-        String token = authenticationService.authenticate(userLogDTO);
-        ApiResponse<String> response = new ApiResponse<>(
+    public ResponseEntity<ApiResponse<LogDTO>> login(@RequestBody UserLogDTO userLogDTO) throws UserManagementException {
+        LogDTO logDTO = authenticationService.authenticate(userLogDTO);
+        ApiResponse<LogDTO> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Token de autenticacion",
-                "Bearer " + token
+                logDTO
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

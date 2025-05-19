@@ -1,5 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
+import moduloGestionUsuarios.UserManagement.DTO.LogDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserLogDTO;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.Administrator;
@@ -43,20 +44,23 @@ public class AuthenticationService implements AuthenticationServiceInterface {
      * @return A JWT token if authentication is successful.
      * @throws UserManagementException if the user is not found or if the password is incorrect.
      */
-    public String authenticate(UserLogDTO userLogDTO) throws UserManagementException {
+    public LogDTO authenticate(UserLogDTO userLogDTO) throws UserManagementException {
         String userName = userLogDTO.getUserName();
         String studentEmail = userName+"@mail.escuelaing.edu.co";
         String adminEmail = userName+"@escuelaing.edu.co";
         String password = userLogDTO.getPassword();
         Optional<Student> student = studentRepository.findByEmailAddress(studentEmail);
         Optional<Administrator> administrator = administratorRepository.findByEmailAddress(adminEmail);
+        String token;
         if (student.isPresent()) {
             Student stud = student.get();
-            return studentAunthenticate(password, userName, stud);
+            token = studentAunthenticate(password, userName, stud);
+            return createLogDTO("STUDENT",stud.getFullName(),token);
         }
         if(administrator.isPresent()) {
             Administrator admin = administrator.get();
-            return administratorAunthenticate(password, userName, admin);
+            token = administratorAunthenticate(password, userName, admin);
+            return createLogDTO(admin.getRole().name(),admin.getFullName(),token);
         }
         throw new UserManagementException(UserManagementException.User_Not_Found);
     }
@@ -97,4 +101,13 @@ public class AuthenticationService implements AuthenticationServiceInterface {
         }
         throw new UserManagementException(UserManagementException.Incorrect_password);
     }
+
+    private LogDTO createLogDTO(String role,String fullName,String token) {
+        LogDTO logDTO = new LogDTO();
+        logDTO.setRole(role);
+        logDTO.setFullName(fullName);
+        logDTO.setToken("Bearer "+token);
+        return logDTO;
+    }
+
 }
