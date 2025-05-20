@@ -58,7 +58,7 @@ public class SecurityConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("https://jolly-rock-0b67b0810.6.azurestaticapps.net")
+                        .allowedOrigins("https://jolly-rock-0b67b0810.6.azurestaticapps.net, http://localhost:3000")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
