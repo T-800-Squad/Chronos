@@ -4,5 +4,5 @@
 - Lina Sanchez
 - Miguel Vanegas
 - Yojhan Toro
-- Ivan Cubillos
+- Ivan Cubillos 
  
