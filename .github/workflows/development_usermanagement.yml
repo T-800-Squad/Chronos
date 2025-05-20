@@ -46,12 +46,7 @@ jobs:
           cache: maven
       - name: Run Tests
         run: mvn test
-      - name: Upload Test Report
-        if: success() || failure()  # Asegura que se suba el reporte incluso si fallan los tests
-        uses: actions/upload-artifact@v4
-        with:
-          name: SpringBoot Report
-          path: target/site/
+  
 
   deploy:
     runs-on: windows-latest
