@@ -65,7 +65,7 @@ public class QueryService implements QueryServiceInterface{
             userDTOList = findByFullName(fullName);
         }
         if(role != null){
-            if("Student".equals(role)){
+            if("STUDENT".equals(role)){
                 List<Student> students = studentRepository.findAll();
                 userDTOList = convertStudentsToDTO(students);
             }else{
