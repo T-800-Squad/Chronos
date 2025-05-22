@@ -67,6 +67,10 @@ public class JwtFilter extends OncePerRequestFilter {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Tu sesión ya expiró");
         }
         String role = JWT.decode(token).getClaim("role").asString();
+        if(role.equals("EXTRACURRICULAR_TEACHER") && path.equals("/user/query")){
+            chain.doFilter(request, response);
+            return;
+        }
         if(!role.equals("ADMIN")) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Session error, no token");
             return;
