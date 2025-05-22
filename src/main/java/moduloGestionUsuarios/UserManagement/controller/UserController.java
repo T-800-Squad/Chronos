@@ -73,7 +73,7 @@ public class UserController {
     }
 
     @Operation(summary = "Consultar usuarios", description = "Consulta estudiantes o administradores con base en filtros específicos.")
-    @GetMapping("/query")
+    @PostMapping("/query")
     public ResponseEntity<ApiResponse<List<UserDTO>>> queryUser(@RequestBody UserDTO userDTO) throws UserManagementException {
         ApiResponse<List<UserDTO>> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
