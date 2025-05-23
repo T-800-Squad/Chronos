@@ -37,7 +37,7 @@ public class UserController {
     private QueryServiceInterface queryService;
 
     @Operation(summary = "Actualizar usuario", description = "Actualiza la información de un estudiante y su contacto de emergencia.")
-    @PutMapping()
+    @PostMapping()
     public ResponseEntity<ApiResponse<String>> update(@RequestBody UserUpdateDTO userUpdateDTO){
         userService.updateStudent(userUpdateDTO);
         ApiResponse<String> response = new ApiResponse<String>(
