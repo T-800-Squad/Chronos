@@ -141,24 +141,49 @@ public class UserService implements UserServiceInterface {
      * @param userUpdateDTO DTO containing updated student and contact information.
      */
     public void updateStudent(UserUpdateDTO userUpdateDTO) {
+        // Buscar estudiante
         Student student = studentRepository.findById(userUpdateDTO.getIdStudent())
                 .orElseThrow(() -> new RuntimeException("Estudiante no encontrado"));
 
-        student.setAddress(userUpdateDTO.getAddress());
-        student.setAcademicProgram(userUpdateDTO.getAcademicProgram());
-        student.setContactNumber(userUpdateDTO.getContactNumber());
-        student.setTypeId(userUpdateDTO.getTypeIdStudent());
+        // Actualizar solo si el campo no es nulo
+        if (userUpdateDTO.getAddress() != null) {
+            student.setAddress(userUpdateDTO.getAddress());
+        }
+        if (userUpdateDTO.getAcademicProgram() != null) {
+            student.setAcademicProgram(userUpdateDTO.getAcademicProgram());
+        }
+        if (userUpdateDTO.getContactNumber() != null) {
+            student.setContactNumber(userUpdateDTO.getContactNumber());
+        }
+        if (userUpdateDTO.getTypeIdStudent() != null) {
+            student.setTypeId(userUpdateDTO.getTypeIdStudent());
+        }
 
-        EmergencyContact emergencyContact = emergencyContactRepository.findById(userUpdateDTO.getIdContact())
-                .orElseThrow(() -> new RuntimeException("Contacto de emergencia no encontrado"));
+        if (userUpdateDTO.getIdContact() != null) {
 
-        emergencyContact.setFullName(userUpdateDTO.getFullNameContact());
-        emergencyContact.setTypeId(userUpdateDTO.getTypeIdContact());
-        emergencyContact.setPhoneNumber(userUpdateDTO.getPhoneNumber());
-        emergencyContact.setRelationship(userUpdateDTO.getRelationship());
+            // Buscar contacto de emergencia
+            EmergencyContact emergencyContact = emergencyContactRepository.findById(userUpdateDTO.getIdContact())
+                    .orElseThrow(() -> new RuntimeException("Contacto de emergencia no encontrado"));
 
+            // Actualizar solo si el campo no es nulo
+            if (userUpdateDTO.getFullNameContact() != null) {
+                emergencyContact.setFullName(userUpdateDTO.getFullNameContact());
+            }
+            if (userUpdateDTO.getTypeIdContact() != null) {
+                emergencyContact.setTypeId(userUpdateDTO.getTypeIdContact());
+            }
+            if (userUpdateDTO.getPhoneNumber() != null) {
+                emergencyContact.setPhoneNumber(userUpdateDTO.getPhoneNumber());
+            }
+            if (userUpdateDTO.getRelationship() != null) {
+                emergencyContact.setRelationship(userUpdateDTO.getRelationship());
+            }
+
+            emergencyContactRepository.save(emergencyContact);
+        }
+        // Guardar los cambios
         studentRepository.save(student);
-        emergencyContactRepository.save(emergencyContact);
+
     }
 
     /**

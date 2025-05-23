@@ -152,7 +152,22 @@ public class QueryService implements QueryServiceInterface{
      * @return A DTO containing student information.
      */
     private UserDTO convertToDTO(Student student) {
-        return new UserDTO(student.getFullName(), student.getAcademicProgram(), student.getCodeStudent(), "Student", student.getIdStudent());
+        return new UserDTO(
+                student.getFullName(),
+                student.getAcademicProgram(),
+                student.getCodeStudent(),
+                "Student",
+                student.getIdStudent(),
+                student.getUserName(),
+                student.getContactNumber(),
+                student.getAddress(),
+                student.getTypeIdStudent(),
+                student.getIdContact(),
+                student.getTypeIdContact(),
+                student.getFullNameContact(),
+                student.getPhoneNumber(),
+                student.getRelationship()
+        );
     }
 
     /**
@@ -162,6 +177,21 @@ public class QueryService implements QueryServiceInterface{
      * @return A DTO containing administrator information.
      */
     private UserDTO convertToDTO(Administrator admin) {
-        return new UserDTO(admin.getFullName(),null,null, admin.getRole().name(), admin.getIdAdmin());
+        return new UserDTO(
+                admin.getFullName(),
+                null,
+                null,
+                admin.getRole().name(),
+                admin.getIdAdmin(),
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
     }
 }
