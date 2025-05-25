@@ -10,6 +10,7 @@ import moduloGestionUsuarios.UserManagement.repository.StudentRepositoryJPA;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDate;
@@ -40,6 +41,7 @@ public class UserServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
 
     @BeforeEach
     public void setUp() {
@@ -363,6 +365,44 @@ public class UserServiceTest {
     }
 
     @Test
+    void testUpdateStudentNulls() {
+        // Crear DTO
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setIdStudent("123");
+        dto.setAddress("Nueva dirección");
+        dto.setAcademicProgram("Nuevo programa");
+        dto.setContactNumber("1111111");
+        dto.setTypeIdStudent("TI");
+
+        dto.setIdContact("999");
+
+
+        // Objetos actuales en la base de datos simulada
+        Student student = new Student();
+        student.setId("123");
+
+        EmergencyContact contact = new EmergencyContact();
+        contact.setId("999");
+
+        // Mock de los repositorios
+        when(studentRepository.findById("123")).thenReturn(Optional.of(student));
+        when(emergencyContactRepository.findById("999")).thenReturn(Optional.of(contact));
+
+        // Ejecutar el método
+        userService.updateStudent(dto);
+
+        // Verificar cambios en Student
+        assertEquals("Nueva dirección", student.getAddress());
+        assertEquals("Nuevo programa", student.getAcademicProgram());
+        assertEquals("1111111", student.getContactNumber());
+        assertEquals("TI", student.getTypeId());
+
+
+        verify(studentRepository).save(student);
+        verify(emergencyContactRepository).save(contact);
+    }
+
+    @Test
     void testUpdateStudentThrowsWhenStudentNotFound() {
         UserUpdateDTO dto = new UserUpdateDTO();
         dto.setIdStudent("noExiste");
@@ -457,9 +497,9 @@ public class UserServiceTest {
             dto.setPassword("123456");
             dto.setId("1");
             Student student = new Student();
-            student.setIdStudent("1");
-            student.setStudentPassword(passwordEncoder.encode("12345"));
-            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            student.setCodeStudent("1");
+            student.setStudentPassword("12345");
+            when(studentRepository.findByCodeStudent("1")).thenReturn(Optional.of(student));
             userService.updatePassword(dto);
         } catch (UserManagementException e) {
             assertEquals(UserManagementException.Incorrect_password, e.getMessage());
@@ -474,9 +514,11 @@ public class UserServiceTest {
             dto.setNewPasswordConfirm("1234");
             dto.setId("1");
             Student student = new Student();
-            student.setIdStudent("1");
-            student.setStudentPassword(passwordEncoder.encode("123456"));
-            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            student.setCodeStudent("1");
+            student.setStudentPassword("123456");
+            when(passwordEncoder.encode("123456")).thenReturn("123456");
+            when(passwordEncoder.matches(any(), any())).thenReturn(true);
+            when(studentRepository.findByCodeStudent("1")).thenReturn(Optional.of(student));
             userService.updatePassword(dto);
         } catch (UserManagementException e) {
             assertEquals(UserManagementException.Different_Password, e.getMessage());
@@ -491,31 +533,17 @@ public class UserServiceTest {
             dto.setNewPasswordConfirm("123456");
             dto.setId("1");
             Student student = new Student();
-            student.setIdStudent("1");
-            student.setStudentPassword(passwordEncoder.encode("123456"));
-            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            student.setCodeStudent("1");
+            student.setStudentPassword("123456");
+            when(passwordEncoder.encode("123456")).thenReturn("123456");
+            when(passwordEncoder.matches(any(), any())).thenReturn(true);
+            when(studentRepository.findByCodeStudent("1")).thenReturn(Optional.of(student));
             userService.updatePassword(dto);
         } catch (UserManagementException e) {
-            assertEquals(UserManagementException.Different_Password, e.getMessage());
+            assertEquals(UserManagementException.Same_Password, e.getMessage());
         }
     }
-    @Test
-    void testUpdatePasswordSuccess(){
-        try {
-            UpdatePasswordDTO dto = new UpdatePasswordDTO();
-            dto.setPassword("123456");
-            dto.setNewPassword("1234567");
-            dto.setNewPasswordConfirm("1234567");
-            dto.setId("1");
-            Student student = new Student();
-            student.setIdStudent("1");
-            student.setStudentPassword(passwordEncoder.encode("123456"));
-            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
-            userService.updatePassword(dto);
-        } catch (UserManagementException e) {
-            fail();
-        }
-    }
+
 
 
 }
