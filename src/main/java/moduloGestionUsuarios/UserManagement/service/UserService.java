@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.dao.DataIntegrityViolationException;
 
 /**
@@ -37,11 +39,11 @@ public class UserService implements UserServiceInterface {
     private EmergencyContactRepositoryJPA emergencyContactRepository;
 
     @Autowired
-
     private ScheduleRepository scheduleRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
 
     /**
      * Registers a new student along with their emergency contact information.
@@ -232,6 +234,47 @@ public class UserService implements UserServiceInterface {
 
         if (!eliminado) {
             throw new UserManagementException("No se encontró ningún usuario con el ID: " + id);
+        }
+    }
+    public void updatePassword(UpdatePasswordDTO updatePasswordDTO) throws UserManagementException {
+        Optional<Student> optionalStudent = studentRepository.findByCodeStudent(updatePasswordDTO.getId());
+        if(optionalStudent.isPresent()) {
+            updateStudentPassword(optionalStudent, updatePasswordDTO);
+            return;
+        }
+        Optional<Administrator> optionalAdministrator = administratorRepository.findByIdAdmin(updatePasswordDTO.getId());
+        if(optionalAdministrator.isPresent()) {
+            updateAdminPassword(optionalAdministrator, updatePasswordDTO);
+        }
+    }
+
+    private void updateStudentPassword(Optional<Student> optionalStudent, UpdatePasswordDTO updatePasswordDTO) throws UserManagementException {
+        Student student = optionalStudent.get();
+        String password = student.getStudentPassword();
+        validatePassword(password, updatePasswordDTO);
+        String newPassword = passwordEncoder.encode(updatePasswordDTO.getNewPassword());
+        student.setStudentPassword(newPassword);
+        studentRepository.save(student);
+    }
+
+    private void updateAdminPassword(Optional<Administrator> optionalAdministrator, UpdatePasswordDTO updatePasswordDTO) throws UserManagementException {
+        Administrator administrator = optionalAdministrator.get();
+        String password = administrator.getAdminPassword();
+        validatePassword(password, updatePasswordDTO);
+        String newPassword = passwordEncoder.encode(updatePasswordDTO.getNewPassword());
+        administrator.setAdminPassword(newPassword);
+        administratorRepository.save(administrator);
+    }
+
+    private void validatePassword(String password,UpdatePasswordDTO updatePasswordDTO) throws UserManagementException {
+        if(!passwordEncoder.matches(updatePasswordDTO.getPassword(),password)){
+            throw new UserManagementException(UserManagementException.Incorrect_password);
+        }
+        if(!updatePasswordDTO.getNewPassword().equals(updatePasswordDTO.getNewPasswordConfirm())) {
+            throw new UserManagementException(UserManagementException.Different_Password);
+        }
+        if(passwordEncoder.matches(updatePasswordDTO.getNewPassword(),password)) {
+            throw new UserManagementException(UserManagementException.Same_Password);
         }
     }
 

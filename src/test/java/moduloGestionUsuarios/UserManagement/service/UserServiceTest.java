@@ -1,9 +1,6 @@
 package moduloGestionUsuarios.UserManagement.service;
 
-import moduloGestionUsuarios.UserManagement.DTO.AdminRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.AdminUpdateDTO;
-import moduloGestionUsuarios.UserManagement.DTO.StudentRegisterDTO;
-import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
+import moduloGestionUsuarios.UserManagement.DTO.*;
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.model.*;
 import moduloGestionUsuarios.UserManagement.repository.AdministratorRepositoryJPA;
@@ -451,6 +448,73 @@ public class UserServiceTest {
         assertEquals("No se encontró ningún usuario con el ID: " + id, exception.getMessage());
         verify(studentRepository, never()).deleteByIdStudent(any());
         verify(administratorRepository, never()).deleteById(any());
+    }
+
+    @Test
+    void testUpdatePasswordIncorrectPasswordException(){
+        try {
+            UpdatePasswordDTO dto = new UpdatePasswordDTO();
+            dto.setPassword("123456");
+            dto.setId("1");
+            Student student = new Student();
+            student.setIdStudent("1");
+            student.setStudentPassword(passwordEncoder.encode("12345"));
+            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            userService.updatePassword(dto);
+        } catch (UserManagementException e) {
+            assertEquals(UserManagementException.Incorrect_password, e.getMessage());
+        }
+    }
+    @Test
+    void testUpdatePasswordDifferentPasswordException(){
+        try {
+            UpdatePasswordDTO dto = new UpdatePasswordDTO();
+            dto.setPassword("123456");
+            dto.setNewPassword("12345");
+            dto.setNewPasswordConfirm("1234");
+            dto.setId("1");
+            Student student = new Student();
+            student.setIdStudent("1");
+            student.setStudentPassword(passwordEncoder.encode("123456"));
+            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            userService.updatePassword(dto);
+        } catch (UserManagementException e) {
+            assertEquals(UserManagementException.Different_Password, e.getMessage());
+        }
+    }
+    @Test
+    void testUpdatePasswordSamePasswordException(){
+        try {
+            UpdatePasswordDTO dto = new UpdatePasswordDTO();
+            dto.setPassword("123456");
+            dto.setNewPassword("123456");
+            dto.setNewPasswordConfirm("123456");
+            dto.setId("1");
+            Student student = new Student();
+            student.setIdStudent("1");
+            student.setStudentPassword(passwordEncoder.encode("123456"));
+            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            userService.updatePassword(dto);
+        } catch (UserManagementException e) {
+            assertEquals(UserManagementException.Different_Password, e.getMessage());
+        }
+    }
+    @Test
+    void testUpdatePasswordSuccess(){
+        try {
+            UpdatePasswordDTO dto = new UpdatePasswordDTO();
+            dto.setPassword("123456");
+            dto.setNewPassword("1234567");
+            dto.setNewPasswordConfirm("1234567");
+            dto.setId("1");
+            Student student = new Student();
+            student.setIdStudent("1");
+            student.setStudentPassword(passwordEncoder.encode("123456"));
+            when(studentRepository.findById("1")).thenReturn(Optional.of(student));
+            userService.updatePassword(dto);
+        } catch (UserManagementException e) {
+            fail();
+        }
     }
 
 
