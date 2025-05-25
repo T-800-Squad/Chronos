@@ -6,9 +6,7 @@ package moduloGestionUsuarios.UserManagement.model;
  * Each role has a description associated with it, and this description is used for matching user input.
  */
 public enum Role {
-    STUDENT,ADMIN,SALA_ADMIN
-    ,TRAINER,MEDICAL_SECRETARY,DOCTOR
-    ,TEACHER,EXTRACURRICULAR_TEACHER, BIENESTAR
+    STUDENT, ADMIN, SALA_ADMIN,TRAINER, MEDICAL_SECRETARY, DOCTOR,TEACHER,EXTRACURRICULAR_TEACHER, BIENESTAR
 
 
 
