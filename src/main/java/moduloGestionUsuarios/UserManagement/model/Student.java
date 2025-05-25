@@ -151,4 +151,49 @@ public class Student {
     public void setId(String number) {
         this.idStudent = number;
     }
+    // Suponiendo que el "userName" es el mismo que el email
+    public String getUserName() {
+        return this.emailAddress;
+    }
+
+    // Obtener datos del primer contacto de emergencia, si existe
+    public String getIdContact() {
+        if (!emergencyContacts.isEmpty()) {
+            return emergencyContacts.get(0).getIdContact();
+        }
+        return null;
+    }
+
+    public String getTypeIdContact() {
+        if (!emergencyContacts.isEmpty()) {
+            return emergencyContacts.get(0).getTypeId();
+        }
+        return null;
+    }
+
+    public String getFullNameContact() {
+        if (!emergencyContacts.isEmpty()) {
+            return emergencyContacts.get(0).getFullName();
+        }
+        return null;
+    }
+
+    public String getPhoneNumber() {
+        if (!emergencyContacts.isEmpty()) {
+            return emergencyContacts.get(0).getPhoneNumber();
+        }
+        return null;
+    }
+
+    public String getRelationship() {
+        if (!emergencyContacts.isEmpty()) {
+            return emergencyContacts.get(0).getRelationship();
+        }
+        return null;
+    }
+
+    public String getTypeIdStudent() {
+        return this.typeId;
+    }
+
 }

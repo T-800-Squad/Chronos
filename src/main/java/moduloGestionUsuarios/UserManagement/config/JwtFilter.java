@@ -32,7 +32,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         String path = request.getRequestURI();
         response.setHeader("Access-Control-Allow-Origin", "https://jolly-rock-0b67b0810.6.azurestaticapps.net");
-        response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE");
+        response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, DELETE, PUT");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
 
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {

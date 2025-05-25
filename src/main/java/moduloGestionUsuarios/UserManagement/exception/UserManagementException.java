@@ -8,11 +8,13 @@ package moduloGestionUsuarios.UserManagement.exception;
  */
 public class UserManagementException extends Exception {
 
-    public static String User_Not_Found = "El nombre de usuario no fue encontrado";
-    public static String Incorrect_password = "La contraseña es incorrecta";
-    public static String User_Not_Exist = "El usuario no existe";
-    public static String Student_Exist="Ya existe un estudiante con ese id";
-    public static String Admin_Exist="Ya existe un usuario con ese id";
+    public static final String User_Not_Found = "El nombre de usuario no fue encontrado";
+    public static final String Incorrect_password = "La contraseña es incorrecta";
+    public static final String User_Not_Exist = "El usuario no existe";
+    public static final String Student_Exist="Ya existe un estudiante con ese id";
+    public static final String Admin_Exist="Ya existe un usuario con ese id";
+    public static final String Different_Password = "La contraseña y su validacion son diferentes";
+    public static final String Same_Password = "La contraseña antigua y la nueva son iguales";
 
     public UserManagementException(String message) {
         super(message);

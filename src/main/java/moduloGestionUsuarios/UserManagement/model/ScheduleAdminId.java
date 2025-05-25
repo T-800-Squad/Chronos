@@ -13,6 +13,19 @@ public class ScheduleAdminId implements Serializable {
     private String id_admin;
     private String id_schedule;
 
+    public String getId_admin() {
+        return id_admin;
+    }
+    public void setId_admin(String id_admin) {
+        this.id_admin = id_admin;
+    }
+    public String getId_schedule() {
+        return id_schedule;
+    }
+    public void setId_schedule(String id_schedule) {
+        this.id_schedule = id_schedule;
+    }
+
     /**
      * Compares this ScheduleAdminId with another object to check if they are equal.
      * Two ScheduleAdminId objects are considered equal if they have the same `id_admin` and `id_schedule` values.
