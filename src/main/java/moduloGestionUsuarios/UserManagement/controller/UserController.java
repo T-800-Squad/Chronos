@@ -5,11 +5,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import moduloGestionUsuarios.UserManagement.DTO.AdminUpdateDTO;
+import moduloGestionUsuarios.UserManagement.DTO.UpdatePasswordDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserDTO;
 import moduloGestionUsuarios.UserManagement.DTO.UserUpdateDTO;
 
 import moduloGestionUsuarios.UserManagement.exception.UserManagementException;
 import moduloGestionUsuarios.UserManagement.response.ApiResponse;
+import moduloGestionUsuarios.UserManagement.service.JwtService;
 import moduloGestionUsuarios.UserManagement.service.QueryServiceInterface;
 import moduloGestionUsuarios.UserManagement.service.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ public class UserController {
     private UserServiceInterface userService;
     @Autowired
     private QueryServiceInterface queryService;
+    @Autowired
+    private JwtService jwtService;
 
     @Operation(summary = "Actualizar usuario", description = "Actualiza la información de un estudiante y su contacto de emergencia.")
     @PutMapping()
@@ -81,5 +85,18 @@ public class UserController {
                 queryService.query(userDTO)
         );
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PutMapping("/password")
+    public ResponseEntity<ApiResponse<String>> updatePassword(@RequestHeader("Authorization") String token, @RequestBody UpdatePasswordDTO updatePasswordDTO ) throws UserManagementException {
+        String id = jwtService.getId(token);
+        updatePasswordDTO.setId(id);
+        userService.updatePassword(updatePasswordDTO);
+        ApiResponse<String> response = new ApiResponse<String>(
+                200,
+                "La contraseña fue actualizada",
+                null
+        );
+        return ResponseEntity.ok(response);
     }
 }
