@@ -47,7 +47,7 @@ Se integró la herramienta JaCoCo (Java Code Coverage Library) y Mockito para co
 Se buscó mantener una cobertura mínima del 80% en servicios y controladores.
 ![](https://github.com/T-800-Squad/Chronos/blob/main/images/jacoco_chronos.png)
 
-## Diagramas del sistemas
+## Diagramas del sistema
 
 ### Diagrama de clases
 ![](https://github.com/T-800-Squad/Chronos/blob/main/images/diag_clases.png)
