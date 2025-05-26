@@ -46,9 +46,9 @@ public class JwtFilterTest {
 
     @Test
     void shouldRejectWhenNoTokenProvided() throws ServletException, IOException {
-        when(request.getRequestURI()).thenReturn("/user/query");
+        when(request.getRequestURI()).thenReturn("/user");
         when(request.getHeader("Authorization")).thenReturn(null);
-        when(request.getMethod()).thenReturn("GET");
+        when(request.getMethod()).thenReturn("PUT");
 
         jwtFilter.doFilterInternal(request, response, chain);
 
