@@ -47,7 +47,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 "/v3/api-docs",
                 "/swagger-resources/**",
                 "/webjars/**" ,
-                "/user/password"
+                "/user/password",
+                "/user/query"
         );
         // Si la ruta es una de las abiertas, continuar sin filtrar.
         if (openPaths.stream().anyMatch(path::startsWith)) {
